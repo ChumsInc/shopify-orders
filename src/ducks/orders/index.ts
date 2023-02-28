@@ -52,6 +52,7 @@ const ordersReducer = createReducer(initialOrdersState, (builder) => {
         })
         .addCase(loadOrders.fulfilled, (state, action) => {
             state.loading = false;
+            state.page = 0;
             state.list = action.payload.sort(defaultOrdersSorter);
             state.fulfillments = buildFulfillmentsList(action.payload);
             state.ages = buildOrdersAges(action.payload);
