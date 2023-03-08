@@ -75,7 +75,7 @@ const currentOrderReducer = createReducer(initialCurrentOrderState, (builder) =>
             }
         })
         .addCase(fulfillOrder.rejected, (state, action) => {
-            state.loading = false;
+            state.saving = false;
             if (state.order && state.order.shopify_order && Number(state.order.id) === Number(action.meta.arg)) {
                 state.order.shopify_order.fulfillment_status = !!state.order.InvoiceNo ? 'invoiced' : 'open';
             }

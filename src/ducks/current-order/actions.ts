@@ -30,7 +30,9 @@ export const loadOrder = createAsyncThunk<ExtendedSavedOrder | null, ExtendedSav
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
-            return !(selectLoading(state) || selectSaving(state));
+            const isLoading = selectLoading(state);
+            const isSaving = selectSaving(state);
+            return !(isLoading || isSaving);
         }
     }
 )
