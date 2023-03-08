@@ -1,6 +1,6 @@
 {
   "name": "shopify-orders",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@reduxjs/toolkit": "^1.9.3",
