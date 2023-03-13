@@ -6,6 +6,7 @@ import ImportStatusIcon from "./ImportStatusIcon";
 import {useSelector} from "react-redux";
 import {selectImporting} from "./selectors";
 import {importOrder} from "../current-order/actions";
+import {differenceInMinutes, parseISO} from "date-fns";
 
 
 const calcBadgeColor = (status: string): BootstrapBGColor => {
@@ -24,7 +25,7 @@ const calcBadgeColor = (status: string): BootstrapBGColor => {
     }
 }
 
-const OrderImportButton = ({id, import_status}: { id: number | string | null, import_status: string }) => {
+const OrderImportButton = ({id, import_status}: { id: number | string | null, import_status: string}) => {
     const dispatch = useAppDispatch();
     const importing = useSelector(selectImporting);
 

@@ -14,7 +14,7 @@ import {
     setRowsPerPage,
     setSort
 } from "./actions";
-import {fulfillOrder, importOrder, linkOrder} from "../current-order/actions";
+import {fulfillOrder, importOrder, linkOrder, loadOrder} from "../current-order/actions";
 
 export interface OrdersState {
     list: ExtendedSavedOrder[];
@@ -59,6 +59,23 @@ const ordersReducer = createReducer(initialOrdersState, (builder) => {
         })
         .addCase(loadOrders.rejected, (state) => {
             state.loading = false;
+        })
+        .addCase(loadOrder.pending, (state, action) => {
+            if (action.meta.arg) {
+                state.list = [
+                    ...state.list.filter(row => row.id !== action.meta.arg?.id),
+                    {...action.meta.arg, import_status: action.meta.arg.import_status === 'waiting' ? 'pending' : action.meta.arg.import_status}
+                ].sort(defaultOrdersSorter)
+            }
+
+        })
+        .addCase(loadOrder.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.list = [
+                    ...state.list.filter(row => row.id !== action.payload?.id),
+                    action.payload
+                ].sort(defaultOrdersSorter)
+            }
         })
         .addCase(setFilterStatus, (state, action) => {
             state.status = action.payload;
