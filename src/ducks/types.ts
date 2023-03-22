@@ -7,6 +7,9 @@ export type FulfillmentStatus = 'open' | 'invoiced' | 'pending' | 'sending' | 'f
 export interface FulfillmentList {
     [key: number | string]: FulfillmentStatus;
 }
+export interface FulfillmentErrorList {
+    [key:number|string]: string;
+}
 
 export interface OrdersAgeList {
     [key: number]: number

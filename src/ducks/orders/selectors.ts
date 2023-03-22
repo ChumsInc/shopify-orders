@@ -11,6 +11,7 @@ export const selectPage = (state: RootState) => state.orders.page;
 export const selectRowsPerPage = (state: RootState) => state.orders.rowsPerPage;
 export const selectSort = (state: RootState) => state.orders.sort;
 export const selectFulfillmentsList = (state: RootState) => state.orders.fulfillments;
+export const selectFulfillmentsErrors = (state:RootState) => state.orders.errors;
 export const selectOrderFulfillment = (state:RootState, id: number|string) => {
     return state.orders.fulfillments[Number(id)] ?? null;
 }

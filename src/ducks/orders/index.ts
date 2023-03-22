@@ -1,5 +1,5 @@
 import {ExtendedSavedOrder, SortProps} from "chums-types";
-import {FilterOrderStatus, FulfillmentList, OrdersAgeList, ShopifyOrdersTable} from "../types";
+import {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList, ShopifyOrdersTable} from "../types";
 import {createReducer} from "@reduxjs/toolkit";
 import addDays from 'date-fns/addDays'
 import {getPreference, localStorageKeys, sessionStorageKeys, setPreference} from "../../api/preferences";
@@ -26,6 +26,7 @@ export interface OrdersState {
     rowsPerPage: number;
     sort: SortProps<ShopifyOrdersTable>;
     fulfillments: FulfillmentList;
+    errors: FulfillmentErrorList;
     ages: OrdersAgeList;
     importing: string | number | null;
 }
@@ -40,6 +41,7 @@ export const initialOrdersState = (): OrdersState => ({
     rowsPerPage: getPreference(localStorageKeys.rowsPerPage, 25),
     sort: {field: "sage_SalesOrderNo", ascending: true},
     fulfillments: {},
+    errors: {},
     ages: {},
     importing: null,
 })
@@ -125,12 +127,16 @@ const ordersReducer = createReducer(initialOrdersState, (builder) => {
         })
         .addCase(fulfillOrder.pending, (state, action) => {
             state.fulfillments[Number(action.meta.arg)] = 'sending';
+            delete state.errors[Number(action.meta.arg)];
         })
         .addCase(fulfillOrder.fulfilled, (state, action) => {
             state.fulfillments[Number(action.meta.arg)] = 'fulfilled';
         })
         .addCase(fulfillOrder.rejected, (state, action) => {
             state.fulfillments[Number(action.meta.arg)] = 'error';
+            if (action.error?.message) {
+                state.errors[Number(action.meta.arg)] = action.error.message;
+            }
         })
         .addCase(fulfillAllOrders.pending, (state) => {
             state.list.filter(row => !!row.InvoiceNo)
