@@ -39,7 +39,7 @@ export async function fetchOrders(arg: FetchOrdersOptions): Promise<ExtendedSave
             options.set('created_at_min', dateString(arg.created_at_min));
         }
         if (arg.status !== 'open' && arg.created_at_max) {
-            options.set('created_at_min', dateString(arg.created_at_max));
+            options.set('created_at_max', dateString(arg.created_at_max));
         }
         const url = `/api/shopify/orders/fetch?${options.toString()}`;
         const {orders} = await fetchJSON<{ orders: ExtendedSavedOrder[] }>(url, {cache: 'no-cache'});
