@@ -58,7 +58,7 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
             <>
                 <Badge color="light" className="text-dark">{row.ShipVia}</Badge>
                 {row.shopify_order?.shipping_lines.length && (
-                    <small className="shipping-description ml-1"
+                    <small className="shipping-description ms-1"
                            title={row.shopify_order.shipping_lines.map(line => line.title).join('; ')}>
                         {row.shopify_order.shipping_lines.map(line => line.title).join('; ')}
                     </small>
