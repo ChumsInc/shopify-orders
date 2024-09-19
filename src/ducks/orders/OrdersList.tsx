@@ -3,18 +3,13 @@ import {Badge, SortableTable, SortableTableField, TablePagination} from "chums-c
 import {ShopifyOrderRow} from "../types";
 import OrderImportButton from "./OrderImportButton";
 import ShopifyOrderStatus from "./ShopifyOrderStatus";
-import {ExtendedSavedOrder, SortProps} from "chums-types";
+import {SortProps} from "chums-types";
 import OrderLink from "./OrderLink";
 import {friendlyDate} from "../../date-utils";
 import numeral from "numeral";
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
-import {
-    loadOrders,
-    setPage,
-    setRowsPerPage,
-    setSort
-} from "./actions";
+import {loadOrders, setPage, setRowsPerPage, setSort} from "./actions";
 import classNames from "classnames";
 import DeliveryAddress from "./DeliveryAddress";
 import {loadOrder} from "../current-order/actions";
@@ -24,9 +19,10 @@ import {selectCurrentOrder} from "../current-order/selectors";
 const fields: SortableTableField<ShopifyOrderRow>[] = [
     {
         field: 'sage_SalesOrderNo',
-        title: 'Order #',
+        title: <span className="text-nowrap">Order #</span>,
         render: (row) => (
-            <OrderLink order_id={row.id} >{row.import_status === 'successful' ? row.sage_SalesOrderNo : row.id}</OrderLink>),
+            <OrderLink
+                order_id={row.id}>{row.import_status === 'successful' ? row.sage_SalesOrderNo : row.id}</OrderLink>),
         sortable: true
     },
     {
@@ -73,8 +69,18 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
         className: 'status-badges',
         render: (row) => (<ShopifyOrderStatus order={row.shopify_order}/>),
     },
-    {field: 'OrderStatus', title: 'SO Status', render: (row) => row.OrderStatus || '', sortable: true},
-    {field: 'InvoiceNo', title: 'Invoice #', render: (row) => row.InvoiceNo || '', sortable: true},
+    {
+        field: 'OrderStatus',
+        title: <span className="text-nowrap">SO Status</span>,
+        render: (row) => row.OrderStatus || '',
+        sortable: true
+    },
+    {
+        field: 'InvoiceNo',
+        title: <span className="text-nowrap">Invoice #</span>,
+        render: (row) => row.InvoiceNo || '',
+        sortable: true
+    },
     {
         field: 'total_price_usd',
         title: 'Total',
