@@ -18,14 +18,16 @@ export default function App() {
         <div>
             <AlertList/>
             <div className="row g-3">
-                <div className="col-lg-9 col-md-8 col-6">
+                <div className="col-lg-8 col-md-7 col-6">
                     <OrdersStatusBar/>
                     <OrdersList/>
                 </div>
-                <div className="col-lg-3 col-md-4 col-6">
+                <div className="col-lg-4 col-md-5 col-6">
                     <TabList tabs={tabs} currentTabId={tab} onSelectTab={onChangeTab} className="mb-1"/>
-                    {tab === 'orders' && (<CurrentOrder/>)}
-                    {tab === 'fulfillments' && (<FulfillmentList/>)}
+                    <div className="p-1">
+                        {tab === 'orders' && (<CurrentOrder/>)}
+                        {tab === 'fulfillments' && (<FulfillmentList/>)}
+                    </div>
                 </div>
             </div>
         </div>
