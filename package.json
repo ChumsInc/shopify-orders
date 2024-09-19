@@ -1,6 +1,6 @@
 {
   "name": "shopify-orders",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
     "chums-components": "github:ChumsInc/chums-components",
