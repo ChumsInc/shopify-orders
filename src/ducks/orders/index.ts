@@ -1,5 +1,5 @@
 import {ExtendedSavedOrder, SortProps} from "chums-types";
-import {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList, ShopifyOrdersTable} from "../types";
+import {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList, ShopifyOrderRow} from "../types";
 import {createReducer} from "@reduxjs/toolkit";
 import addDays from 'date-fns/addDays'
 import {getPreference, localStorageKeys, sessionStorageKeys, setPreference} from "../../api/preferences";
@@ -17,14 +17,14 @@ import {
 import {fulfillOrder, importOrder, linkOrder, loadOrder} from "../current-order/actions";
 
 export interface OrdersState {
-    list: ExtendedSavedOrder[];
+    list: ShopifyOrderRow[];
     loading: boolean;
     status: FilterOrderStatus;
     created_at_min: string | null;
     created_at_max: string | null;
     page: number;
     rowsPerPage: number;
-    sort: SortProps<ShopifyOrdersTable>;
+    sort: SortProps<ShopifyOrderRow>;
     fulfillments: FulfillmentList;
     errors: FulfillmentErrorList;
     ages: OrdersAgeList;
@@ -66,7 +66,8 @@ const ordersReducer = createReducer(initialOrdersState, (builder) => {
             if (action.meta.arg) {
                 state.list = [
                     ...state.list.filter(row => row.id !== action.meta.arg?.id),
-                    {...action.meta.arg, import_status: action.meta.arg.import_status === 'waiting' ? 'pending' : action.meta.arg.import_status}
+                    ...state.list.filter(row => row.id === action.meta.arg?.id)
+                        .map(row => ({...row, import_status: 'pending'}))
                 ].sort(defaultOrdersSorter)
             }
 

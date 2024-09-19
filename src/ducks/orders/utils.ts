@@ -1,10 +1,10 @@
-import {FulfillmentList, OrdersAgeList, ShopifyOrdersTable} from "../types";
+import {FulfillmentList, OrdersAgeList, ShopifyOrderRow} from "../types";
 import {ExtendedSavedOrder, SortProps} from "chums-types";
 import {ShopifyAddress} from "chums-types/src/shopify/shopify-orders";
 import differenceInBusinessDays from "date-fns/differenceInBusinessDays";
 
-export const orderSorter = (sort: SortProps<ShopifyOrdersTable>) =>
-    (a: ExtendedSavedOrder, b: ExtendedSavedOrder) => {
+export const orderSorter = (sort: SortProps<ShopifyOrderRow>) =>
+    (a: ShopifyOrderRow, b: ShopifyOrderRow) => {
         const {field, ascending} = sort;
         const sortMod = ascending ? 1 : -1;
         switch (field) {
@@ -66,11 +66,11 @@ export const formatAddress = (address?:ShopifyAddress):string|null => {
 };
 
 
-export const defaultOrdersSorter = (a: ExtendedSavedOrder, b: ExtendedSavedOrder) => {
+export const defaultOrdersSorter = (a: ShopifyOrderRow, b: ShopifyOrderRow) => {
     return a.sage_SalesOrderNo > b.sage_SalesOrderNo ? 1 : -1;
 }
 
-export const buildFulfillmentsList = (orders: ExtendedSavedOrder[]): FulfillmentList => {
+export const buildFulfillmentsList = (orders: ShopifyOrderRow[]): FulfillmentList => {
     const list: FulfillmentList = {};
     orders.forEach(order => {
         list[order.id] = 'open';
@@ -85,7 +85,7 @@ export const buildFulfillmentsList = (orders: ExtendedSavedOrder[]): Fulfillment
     return list;
 }
 
-export const buildOrdersAges = (orders: ExtendedSavedOrder[]): OrdersAgeList => {
+export const buildOrdersAges = (orders: ShopifyOrderRow[]): OrdersAgeList => {
     const list: OrdersAgeList = {};
     const today = new Date();
     orders.forEach(order => {

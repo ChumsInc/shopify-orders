@@ -2,19 +2,19 @@ import React from 'react';
 import {useAppDispatch} from "../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentOrder} from "./selectors";
-import {loadRisks} from "./actions";
-import classNames from "classnames";
+import {loadRiskSummary} from "./actions";
+import LegacyRiskTable from "./LegacyRiskTable";
+import RiskSummary from "./RiskSummary";
 
 const OrderRisks = () => {
     const dispatch = useAppDispatch();
     const order = useSelector(selectCurrentOrder);
-    const risks = order?.shopify_order?.risks ?? [];
 
     const clickHandler = () => {
         if (!order) {
             return;
         }
-        dispatch(loadRisks(order?.id))
+        dispatch(loadRiskSummary(order.sage_SalesOrderNo))
     }
     if (!order || !order.shopify_order) {
         return null;
@@ -22,26 +22,20 @@ const OrderRisks = () => {
 
     return (
         <>
-            <h5 onClick={clickHandler}>Risks</h5>
-
-            <table className="table table-xs table-hover">
-                <thead>
-                <tr>
-                    <th>Score</th>
-                    <th>Message</th>
-                    <th>Recommendation</th>
-                </tr>
-                </thead>
-                <tbody>
-                {risks.map(row => (
-                    <tr key={row.id}>
-                        <td>{row.score}</td>
-                        <td>{row.message}</td>
-                        <td className={classNames({'text-danger': row.recommendation !== 'accept'})}>{row.recommendation}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <div className="row g-3 mt-1">
+                <div className="col-auto">
+                    <h5>Risks</h5>
+                </div>
+                <div className="col"></div>
+                <div className="col-auto">
+                    <button type="button" onClick={clickHandler}
+                            className="btn btn-sm btn-outline-secondary">
+                        Update Risks
+                    </button>
+                </div>
+            </div>
+            <RiskSummary/>
+            <LegacyRiskTable/>
         </>
     )
 }

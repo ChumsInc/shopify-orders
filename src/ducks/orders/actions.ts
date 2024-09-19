@@ -2,11 +2,11 @@ import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {ExtendedSavedOrder, SortProps} from "chums-types";
 import {RootState} from "../../app/configureStore";
 import {fetchOrders} from "../../api";
-import {FilterOrderStatus, ShopifyOrdersTable} from "../types";
+import {FilterOrderStatus, ShopifyOrderRow} from "../types";
 import {selectFetchOptions, selectLoading, selectNextPendingFulfillment} from "./selectors";
 import {fulfillOrder} from "../current-order/actions";
 
-export const loadOrders = createAsyncThunk<ExtendedSavedOrder[]>(
+export const loadOrders = createAsyncThunk<ShopifyOrderRow[]>(
     'orders/list/load',
     async (arg, {getState}) => {
         const state = getState() as RootState
@@ -37,5 +37,5 @@ export const setCreatedMin = createAction<Date|null>('orders/setCreatedMin');
 export const setCreatedMax = createAction<Date|null>('orders/setCreatedMax');
 export const setPage = createAction<number>('orders/setPage');
 export const setRowsPerPage = createAction<number>('orders/setRowsPerPage');
-export const setSort = createAction<SortProps<ShopifyOrdersTable>>('orders/setSort');
+export const setSort = createAction<SortProps<ShopifyOrderRow>>('orders/setSort');
 

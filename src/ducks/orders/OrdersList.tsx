@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Badge, SortableTable, SortableTableField, TablePagination} from "chums-components";
-import {ShopifyOrdersTable} from "../types";
+import {ShopifyOrderRow} from "../types";
 import OrderImportButton from "./OrderImportButton";
 import ShopifyOrderStatus from "./ShopifyOrderStatus";
 import {ExtendedSavedOrder, SortProps} from "chums-types";
@@ -21,7 +21,7 @@ import {loadOrder} from "../current-order/actions";
 import {selectPage, selectRowsPerPage, selectSort, selectSortedList} from "./selectors";
 import {selectCurrentOrder} from "../current-order/selectors";
 
-const fields: SortableTableField<ShopifyOrdersTable>[] = [
+const fields: SortableTableField<ShopifyOrderRow>[] = [
     {
         field: 'sage_SalesOrderNo',
         title: 'Order #',
@@ -84,7 +84,7 @@ const fields: SortableTableField<ShopifyOrdersTable>[] = [
     },
 ]
 
-const rowClassName = (row: ExtendedSavedOrder) => {
+const rowClassName = (row: ShopifyOrderRow) => {
     return classNames({
         'text-danger': row.import_status === 'failed',
         'text-success': !!row.InvoiceNo,
@@ -106,11 +106,14 @@ const OrdersList = () => {
     const sortChangeHandler = (sort: SortProps) => dispatch(setSort(sort));
     const pageChangeHandler = (page: number) => dispatch(setPage(page));
     const rowsPerPageChangeHandler = (rpp: number) => dispatch(setRowsPerPage(rpp));
-    const onSelectRow = (row: ExtendedSavedOrder) => dispatch(loadOrder(row))
+    const onSelectRow = (row: ShopifyOrderRow) => {
+        dispatch(loadOrder(row))
+    }
 
     return (
         <div>
-            <SortableTable fields={fields} data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+            <SortableTable fields={fields}
+                           data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
                            currentSort={sort} keyField="id" onChangeSort={sortChangeHandler}
                            selected={current?.id}
                            rowClassName={rowClassName} onSelectRow={onSelectRow}/>

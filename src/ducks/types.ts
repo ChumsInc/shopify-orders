@@ -1,5 +1,5 @@
 import {ExtendedSavedOrder, ShopifyOrder, SortProps} from "chums-types";
-import {ShopifyAddress, ShopifyCustomer} from "chums-types/src/shopify/shopify-orders";
+import {SavedOrder, ShopifyAddress, ShopifyCustomer} from "chums-types/src/shopify/shopify-orders";
 
 export type FilterOrderStatus = 'open' | 'closed' | 'cancelled' | 'any';
 export type FulfillmentStatus = 'open' | 'invoiced' | 'pending' | 'sending' | 'fulfilled' | 'error'|'partial';
@@ -42,8 +42,10 @@ export interface NestedSortProps<T = object> extends SortProps {
     field: NestedKeyOf<T>;
 }
 
-export type ShopifyOrdersTable =
+export type ShopifyOrderRow =
     Pick<ExtendedSavedOrder, 'sage_SalesOrderNo' | 'OrderStatus' | 'InvoiceNo' | 'CancelReasonCode' | 'ShipVia' | 'import_status' | 'shopify_order'>
-    & Pick<ShopifyOrder, 'id' | 'created_at' | 'shipping_lines' | 'total_price_usd' | 'fulfillment_status' | 'gateway' | 'tags' | 'financial_status' | 'risks' | 'processed_at' | 'closed_at' | 'cancelled_at' | 'total_discounts' | 'customer' | 'shipping_address'>
-    & Pick<ShopifyAddress, 'city' | 'province_code' | 'zip' | 'country_code'>
-    & Pick<ShopifyCustomer, 'first_name' | 'last_name'>
+    & Partial<Pick<ShopifyOrder, 'id' | 'created_at' | 'shipping_lines' | 'total_price_usd' | 'fulfillment_status' | 'gateway' | 'tags' | 'financial_status' | 'risks' | 'processed_at' | 'closed_at' | 'cancelled_at' | 'total_discounts' | 'customer' | 'shipping_address'>>
+    & Partial<Pick<ShopifyAddress, 'city' | 'province_code' | 'zip' | 'country_code'>>
+    & Partial<Pick<ShopifyCustomer, 'first_name' | 'last_name'>>
+    & Pick<ShopifyOrder, 'id'>
+    & Partial<Pick<SavedOrder, 'import_result'>>

@@ -1,10 +1,11 @@
 import {ExtendedSavedOrder} from "chums-types";
-import {fulfillOrder, importOrder, linkOrder, loadOrder, loadRisks,} from "./actions";
+import {fulfillOrder, importOrder, linkOrder, loadOrder, loadRiskSummary,} from "./actions";
 import {createReducer} from "@reduxjs/toolkit";
 import {loadOrders} from "../orders/actions";
+import {ShopifyOrderRow} from "../types";
 
 export interface CurrentOrderState {
-    order: ExtendedSavedOrder | null;
+    order: ShopifyOrderRow | null;
     loading: boolean;
     saving: boolean;
 }
@@ -50,16 +51,16 @@ const currentOrderReducer = createReducer(initialCurrentOrderState, (builder) =>
         .addCase(loadOrder.rejected, (state) => {
             state.loading = false;
         })
-        .addCase(loadRisks.pending, (state) => {
+        .addCase(loadRiskSummary.pending, (state) => {
             state.loading = true;
         })
-        .addCase(loadRisks.fulfilled, (state, action) => {
+        .addCase(loadRiskSummary.fulfilled, (state, action) => {
             state.loading = false;
             if (state.order && state.order.shopify_order) {
-                state.order.shopify_order.risks = action.payload;
+                state.order.shopify_order.risk = action.payload;
             }
         })
-        .addCase(loadRisks.rejected, (state) => {
+        .addCase(loadRiskSummary.rejected, (state) => {
             state.loading = false;
         })
         .addCase(fulfillOrder.pending, (state, action) => {

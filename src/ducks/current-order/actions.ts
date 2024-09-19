@@ -1,12 +1,13 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
 import {ExtendedSavedOrder, Fulfillment, ShopifyRisk} from "chums-types";
-import {LinkSalesOrderOptions, TriggerImportOptions} from "../types";
-import {fetchOrder, fetchRisks, postFulfillOrder, postLinkSalesOrder, retryImportOrder} from "../../api";
+import {LinkSalesOrderOptions, ShopifyOrderRow, TriggerImportOptions} from "../types";
+import {fetchOrder, fetchRiskSummary, postFulfillOrder, postLinkSalesOrder, retryImportOrder} from "../../api";
 import {RootState} from "../../app/configureStore";
 import {selectSaving} from "./selectors";
 import {selectImporting, selectLoading, selectOrderFulfillment} from "../orders/selectors";
+import {OrderRiskSummary} from "chums-types/src/shopify";
 
-export const importOrder = createAsyncThunk<ExtendedSavedOrder|null, TriggerImportOptions>(
+export const importOrder = createAsyncThunk<ShopifyOrderRow|null, TriggerImportOptions>(
     'orders/import',
     async (arg, ) => {
         return await retryImportOrder(arg);
@@ -20,7 +21,7 @@ export const importOrder = createAsyncThunk<ExtendedSavedOrder|null, TriggerImpo
 );
 
 
-export const loadOrder = createAsyncThunk<ExtendedSavedOrder | null, ExtendedSavedOrder | undefined>(
+export const loadOrder = createAsyncThunk<ShopifyOrderRow | null, ShopifyOrderRow|undefined>(
     'currentOrder/load',
     async (arg) => {
         if (!arg) {
@@ -37,7 +38,7 @@ export const loadOrder = createAsyncThunk<ExtendedSavedOrder | null, ExtendedSav
     }
 )
 
-export const linkOrder = createAsyncThunk<ExtendedSavedOrder | null, LinkSalesOrderOptions>(
+export const linkOrder = createAsyncThunk<ShopifyOrderRow | null, LinkSalesOrderOptions>(
     'currentOrder/link',
     async (arg) => {
         return await postLinkSalesOrder(arg);
@@ -50,10 +51,10 @@ export const linkOrder = createAsyncThunk<ExtendedSavedOrder | null, LinkSalesOr
     }
 )
 
-export const loadRisks = createAsyncThunk<ShopifyRisk[], number | string>(
-    'currentOrder/loadRisks',
+export const loadRiskSummary = createAsyncThunk<OrderRiskSummary|null, string>(
+    'currentOrder/loadRiskSummary',
     async (arg) => {
-        return await fetchRisks(arg);
+        return await fetchRiskSummary(arg);
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;

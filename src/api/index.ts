@@ -1,6 +1,7 @@
 import {ExtendedSavedOrder, Fulfillment, ShopifyOrder, ShopifyRisk} from "chums-types";
 import {fetchJSON} from "chums-components";
-import {FetchOrdersOptions, LinkSalesOrderOptions, TriggerImportOptions} from "../ducks/types";
+import {FetchOrdersOptions, LinkSalesOrderOptions, ShopifyOrderRow, TriggerImportOptions} from "../ducks/types";
+import {OrderRiskSummary} from "chums-types/src/shopify";
 
 export const dateString = (date: string | null): string => {
     if (!date) {
@@ -13,11 +14,11 @@ export const dateString = (date: string | null): string => {
     return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
 }
 
-export async function fetchOrder(arg: number | string): Promise<ExtendedSavedOrder | null> {
+export async function fetchOrder(arg: number | string): Promise<ShopifyOrderRow | null> {
     try {
         const url = `/api/shopify/orders/fetch/${encodeURIComponent(arg)}`
-        const {order} = await fetchJSON<{ order: ExtendedSavedOrder }>(url, {cache: "no-cache"});
-        return order ?? null;
+        const res = await fetchJSON<{ order: ShopifyOrderRow }>(url, {cache: "no-cache"});
+        return res?.order ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchOrder()", err.message);
@@ -28,7 +29,7 @@ export async function fetchOrder(arg: number | string): Promise<ExtendedSavedOrd
     }
 }
 
-export async function fetchOrders(arg: FetchOrdersOptions): Promise<ExtendedSavedOrder[]> {
+export async function fetchOrders(arg: FetchOrdersOptions): Promise<ShopifyOrderRow[]> {
     try {
         const options = new URLSearchParams();
         if (arg.status !== 'open' && !arg.created_at_min) {
@@ -42,8 +43,8 @@ export async function fetchOrders(arg: FetchOrdersOptions): Promise<ExtendedSave
             options.set('created_at_min', dateString(arg.created_at_max));
         }
         const url = `/api/shopify/orders/fetch?${options.toString()}`;
-        const {orders} = await fetchJSON<{ orders: ExtendedSavedOrder[] }>(url, {cache: 'no-cache'});
-        return orders ?? [];
+        const res = await fetchJSON<{ orders: ShopifyOrderRow[] }>(url, {cache: 'no-cache'});
+        return res?.orders ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchOrders()", err.message);
@@ -54,14 +55,14 @@ export async function fetchOrders(arg: FetchOrdersOptions): Promise<ExtendedSave
     }
 }
 
-export async function retryImportOrder(arg: TriggerImportOptions): Promise<ExtendedSavedOrder | null> {
+export async function retryImportOrder(arg: TriggerImportOptions): Promise<ShopifyOrderRow | null> {
     try {
         const url = `/api/shopify/orders/import/${encodeURIComponent(arg.id)}`;
-        const {order} = await fetchJSON<{ order: ShopifyOrder }>(url, {cache: 'no-cache', method: 'POST'})
-        if (!order) {
+        const res = await fetchJSON<{ order: ShopifyOrder }>(url, {cache: 'no-cache', method: 'POST'})
+        if (!res?.order) {
             return null;
         }
-        return await fetchOrder(order.id);
+        return await fetchOrder(res.order.id);
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchImportOrder()", err.message);
@@ -72,11 +73,11 @@ export async function retryImportOrder(arg: TriggerImportOptions): Promise<Exten
     }
 }
 
-export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<ExtendedSavedOrder | null> {
+export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<ShopifyOrderRow | null> {
     try {
         const url = `/api/shopify/orders/${encodeURIComponent(arg.id)}/link/${encodeURIComponent(arg.salesOrderNo)}`;
-        const {order} = await fetchJSON<{ order: ExtendedSavedOrder }>(url, {cache: 'no-cache', method: 'POST'})
-        return order ?? null;
+        const res = await fetchJSON<{ order: ShopifyOrderRow }>(url, {cache: 'no-cache', method: 'POST'})
+        return res?.order ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postLinkSalesOrder()", err.message);
@@ -90,8 +91,8 @@ export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<Ex
 export async function postFulfillOrder(arg: number | string): Promise<Fulfillment | null> {
     try {
         const url = `/api/shopify/fulfillment-orders/${encodeURIComponent(arg)}/fulfill`;
-        const {fulfillment} = await fetchJSON<{ fulfillment: Fulfillment }>(url, {method: 'POST'});
-        return fulfillment ?? null;
+        const res = await fetchJSON<{ fulfillment: Fulfillment }>(url, {method: 'POST'});
+        return res?.fulfillment ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postFulfillOrder()", err.message);
@@ -102,17 +103,17 @@ export async function postFulfillOrder(arg: number | string): Promise<Fulfillmen
     }
 }
 
-export async function fetchRisks(arg: number | string): Promise<ShopifyRisk[]> {
+export async function fetchRiskSummary(arg: string): Promise<OrderRiskSummary|null> {
     try {
-        const url = `/api/shopify/orders/risk/${encodeURIComponent(arg)}`;
-        const {risks} = await fetchJSON<{ risks: ShopifyRisk[] }>(url, {cache: 'no-cache'});
-        return risks ?? [];
+        const url = `/api/shopify/graphql/orders/${encodeURIComponent(arg)}/risk.json`;
+        const res = await fetchJSON<{ riskSummary: OrderRiskSummary }>(url, {cache: 'no-cache'});
+        return res?.riskSummary ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
-            console.debug("fetchRisks()", err.message);
+            console.debug("fetchRiskSummary()", err.message);
             return Promise.reject(err);
         }
-        console.debug("fetchRisks()", err);
-        return Promise.reject(new Error('Error in fetchRisks()'));
+        console.debug("fetchRiskSummary()", err);
+        return Promise.reject(new Error('Error in fetchRiskSummary()'));
     }
 }
