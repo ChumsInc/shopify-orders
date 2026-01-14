@@ -31,17 +31,6 @@ export interface LinkSalesOrderOptions {
     salesOrderNo: string;
 }
 
-export type NestedKeyOf<T = object> =
-    {
-        [Key in keyof T & (string | number)]: T[Key] extends object
-        ? `${Key}` | `${Key}.${NestedKeyOf<T[Key]>}`
-        : `${Key}`
-    }[keyof T & (string | number)];
-
-export interface NestedSortProps<T = object> extends SortProps {
-    field: NestedKeyOf<T>;
-}
-
 export type ShopifyOrderRow =
     Pick<ExtendedSavedOrder, 'sage_SalesOrderNo' | 'OrderStatus' | 'InvoiceNo' | 'CancelReasonCode' | 'ShipVia' | 'import_status' | 'shopify_order'>
     & Partial<Pick<ShopifyOrder, 'id' | 'created_at' | 'shipping_lines' | 'total_price_usd' | 'fulfillment_status' | 'gateway' | 'tags' | 'financial_status' | 'risks' | 'processed_at' | 'closed_at' | 'cancelled_at' | 'total_discounts' | 'customer' | 'shipping_address'>>

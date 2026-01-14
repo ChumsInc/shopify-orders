@@ -40,7 +40,7 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
     {
         field: 'customer',
         title: 'Customer',
-        render: (row) => `${row.shopify_order?.customer.first_name ?? ''} ${row.shopify_order?.customer.last_name ?? ''}`,
+        render: (row) => `${row.shopify_order?.customer?.first_name ?? ''} ${row.shopify_order?.customer?.last_name ?? ''}`,
         sortable: true
     },
     {
@@ -53,10 +53,10 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
         field: 'shipping_lines', title: 'Shipping', render: (row) => (
             <>
                 <Badge color="light" className="text-dark">{row.ShipVia}</Badge>
-                {row.shopify_order?.shipping_lines.length && (
+                {row.shopify_order?.shipping_lines?.length && (
                     <small className="shipping-description ms-1"
-                           title={row.shopify_order.shipping_lines.map(line => line.title).join('; ')}>
-                        {row.shopify_order.shipping_lines.map(line => line.title).join('; ')}
+                           title={row.shopify_order?.shipping_lines.map(line => line.title).join('; ')}>
+                        {row.shopify_order?.shipping_lines.map(line => line.title).join('; ')}
                     </small>
                 )}
             </>
@@ -84,7 +84,7 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
     {
         field: 'total_price_usd',
         title: 'Total',
-        render: (row) => numeral(row.shopify_order?.total_price_set.presentment_money.amount).format('$0,0.00'),
+        render: (row) => numeral(row.shopify_order?.total_price_set?.presentment_money?.amount ?? 0).format('$0,0.00'),
         className: 'right',
         sortable: true,
     },
@@ -109,7 +109,7 @@ const OrdersList = () => {
         dispatch(loadOrders());
     }, [])
 
-    const sortChangeHandler = (sort: SortProps) => dispatch(setSort(sort));
+    const sortChangeHandler = (sort: SortProps<ShopifyOrderRow>) => dispatch(setSort(sort));
     const pageChangeHandler = (page: number) => dispatch(setPage(page));
     const rowsPerPageChangeHandler = (rpp: number) => dispatch(setRowsPerPage(rpp));
     const onSelectRow = (row: ShopifyOrderRow) => {

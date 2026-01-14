@@ -23,14 +23,10 @@ const OrderImportInfo = () => {
     return (
         <div>
             {order.import_status !== 'successful' && (
-                <Alert color="warning">
+                <Alert color="danger">
                     <strong className="me-1">Import Error:</strong>
                     {order.import_result?.error ?? null}
                 </Alert>
-            )}
-            <FormCheck type="checkbox" label="Show Import Detail" checked={open} onChange={(ev) => setOpen(ev.target.checked)} />
-            {open && (
-                <JSONView data={order} defaultOpenLevels={2} />
             )}
         </div>
     )

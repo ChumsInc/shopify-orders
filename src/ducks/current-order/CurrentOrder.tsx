@@ -13,6 +13,8 @@ import FulfillButton from "./FulfillButton";
 import OrderLink from "../orders/OrderLink";
 import {useAppDispatch} from "../../app/configureStore";
 import {loadOrder} from "./actions";
+import ImportAlerts from "./ImportAlerts";
+import OrderJSON from "./OrderJSON";
 
 const CurrentOrder = () => {
     const dispatch = useAppDispatch();
@@ -32,10 +34,12 @@ const CurrentOrder = () => {
         <div>
             <h3 className="d-flex justify-content-between align-items-baseline">
                 <a href={intranet_url} target="_blank">{current.sage_SalesOrderNo}</a>
-                <OrderImportButton id={current.id} import_status={current.import_status}/>
+                <OrderImportButton id={current.id} import_status={current.import_status} canRetry/>
                 <button className="btn btn-sm btn-close" onClick={closeHandler} />
             </h3>
             {loading && <LoadingProgressBar striped animated className="mb-3"/>}
+            <ImportAlerts />
+            <OrderImportInfo/>
             {(current.import_status === 'failed' || !current.import_result || current.import_result?.error || current.OrderStatus === 'X') && (
                 <LinkSalesOrder/>
             )}
@@ -45,8 +49,8 @@ const CurrentOrder = () => {
             <FulfillButton/>
             <div className="card">
                 <div className="card-body">
-                    <h5 className="card-title">{[current.shopify_order?.customer.first_name, current.shopify_order?.customer.last_name].join(' ')}</h5>
-                    <div>{current.shopify_order?.customer.email}</div>
+                    <h5 className="card-title">{[current.shopify_order?.customer?.first_name, current.shopify_order?.customer?.last_name].join(' ')}</h5>
+                    <div>{current.shopify_order?.customer?.email}</div>
                     {!!current.shopify_order?.created_at && (
                         <div>Order Date: {format(parseJSON(current.shopify_order?.created_at), 'MM/dd/yyyy')}
                             {' '}
@@ -64,9 +68,10 @@ const CurrentOrder = () => {
                     </div>
                 </div>
             </div>
+
             <OrderRisks/>
             <OrderItems/>
-            <OrderImportInfo/>
+            <OrderJSON />
         </div>
     )
 }

@@ -22,7 +22,7 @@ const OrderItems = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {order.shopify_order?.line_items.map(row => (
+                {order.shopify_order?.line_items?.map(row => (
                     <tr key={row.id}>
                         <td>{row.sku}</td>
                         <td>{row.name}</td>

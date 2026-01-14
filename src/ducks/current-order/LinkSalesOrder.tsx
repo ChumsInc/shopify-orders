@@ -21,9 +21,9 @@ const LinkSalesOrder = () => {
     }
 
     return (
-        <form className="input-group input-group-sm" onSubmit={onSubmit}>
+        <form className="input-group input-group-sm mb-3" onSubmit={onSubmit}>
             <div className="input-group-text">Sales Order #</div>
-            <input type="text" pattern="/[\dA-Z]{7}/"
+            <input type="text" pattern="/[\dA-Z]{7}/" className="form-control"
                    value={salesOrderNo}
                    onChange={onChange}/>
             <button type="submit" className="btn btn-sm btn-primary">Link Order</button>

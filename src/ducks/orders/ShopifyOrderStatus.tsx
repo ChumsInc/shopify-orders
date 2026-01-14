@@ -85,7 +85,7 @@ const ShopifyOrderStatus = ({order}: { order: ShopifyOrder | null }) => {
         cancelled_at
     } = order;
     const days = differenceInBusinessDays(new Date(closed_at || now()), new Date(processed_at));
-    const tagList = tags.split(',');
+    const tagList = order?.tags?.split(',') ?? [];
     const hasDiscount = Number(total_discounts) > 0;
     // const hasRisk = risks?.filter(risk => Number(risk.score) > 0).length > 0;
     const [risk] = risks?.filter(risk => Number(risk.score) > 0);

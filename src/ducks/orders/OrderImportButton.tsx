@@ -6,26 +6,33 @@ import ImportStatusIcon from "./ImportStatusIcon";
 import {useSelector} from "react-redux";
 import {selectImporting} from "./selectors";
 import {importOrder} from "../current-order/actions";
-import {differenceInMinutes, parseISO} from "date-fns";
 
 
 const calcBadgeColor = (status: string): BootstrapBGColor => {
     switch (status) {
-    case 'successful':
-        return 'success';
-    case 'linked':
-        return 'info';
-    case 'failed':
-        return 'danger';
-    case 'waiting':
-    case 'importing':
-        return 'warning';
-    default:
-        return 'secondary';
+        case 'successful':
+            return 'success';
+        case 'linked':
+            return 'info';
+        case 'failed':
+            return 'danger';
+        case 'require-validation':
+            return 'warning';
+        case 'waiting':
+        case 'importing':
+            return 'secondary';
+        default:
+            return 'secondary';
     }
 }
 
-const OrderImportButton = ({id, import_status}: { id: number | string | null, import_status: string}) => {
+export interface OrderImportButtonProps {
+    id: number | string | null,
+    import_status: string,
+    canRetry?: boolean
+}
+
+export default function OrderImportButton({id, import_status, canRetry}: OrderImportButtonProps) {
     const dispatch = useAppDispatch();
     const importing = useSelector(selectImporting);
 
@@ -46,7 +53,7 @@ const OrderImportButton = ({id, import_status}: { id: number | string | null, im
             {!!import_status && (
                 <Badge color={badgeColor}><ImportStatusIcon import_status={import_status}/></Badge>
             )}
-            {(!import_status || import_status === 'failed') && (
+            {canRetry && (!import_status || import_status === 'failed') && (
                 <SpinnerButton type="button" color="primary" size="sm"
                                className="ms-1"
                                spinning={!!importing}
@@ -58,5 +65,3 @@ const OrderImportButton = ({id, import_status}: { id: number | string | null, im
         </>
     );
 }
-
-export default OrderImportButton;
