@@ -1,8 +1,7 @@
-import {ExtendedSavedOrder, SortProps} from "chums-types";
-import {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList, ShopifyOrderRow} from "../types";
+import type {SortProps} from "chums-types";
+import type {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList, ShopifyOrderRow} from "../types";
 import {createReducer} from "@reduxjs/toolkit";
-import addDays from 'date-fns/addDays'
-import {getPreference, localStorageKeys, sessionStorageKeys, setPreference} from "../../api/preferences";
+import {getPreference, localStorageKeys, sessionStorageKeys, setPreference} from "@/api/preferences";
 import {buildFulfillmentsList, buildOrdersAges, defaultOrdersSorter} from "./utils";
 import {
     fulfillAllOrders,
@@ -15,6 +14,7 @@ import {
     setSort
 } from "./actions";
 import {fulfillOrder, importOrder, linkOrder, loadOrder} from "../current-order/actions";
+import dayjs from "dayjs";
 
 export interface OrdersState {
     list: ShopifyOrderRow[];
@@ -35,7 +35,7 @@ export const initialOrdersState = (): OrdersState => ({
     list: [],
     loading: false,
     status: 'open',
-    created_at_min: getPreference(sessionStorageKeys.fromDate, addDays(new Date(), -14).toISOString()),
+    created_at_min: getPreference(sessionStorageKeys.fromDate, dayjs(new Date()).subtract(14, 'days').toISOString()),
     created_at_max: getPreference(sessionStorageKeys.toDate, null),
     page: 0,
     rowsPerPage: getPreference(localStorageKeys.rowsPerPage, 25),
@@ -84,12 +84,12 @@ const ordersReducer = createReducer(initialOrdersState, (builder) => {
             state.status = action.payload;
         })
         .addCase(setCreatedMin, (state, action) => {
-            setPreference(sessionStorageKeys.fromDate, action.payload?.toISOString() ?? null);
-            state.created_at_min = action.payload?.toISOString() ?? null;
+            setPreference(sessionStorageKeys.fromDate, action.payload ?? null);
+            state.created_at_min = action.payload ?? null;
         })
         .addCase(setCreatedMax, (state, action) => {
-            setPreference(sessionStorageKeys.toDate, action.payload?.toISOString() ?? null);
-            state.created_at_max = action.payload?.toISOString() ?? null;
+            setPreference(sessionStorageKeys.toDate, action.payload ?? null);
+            state.created_at_max = action.payload ?? null;
         })
         .addCase(setPage, (state, action) => {
             state.page = action.payload;

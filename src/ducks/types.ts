@@ -1,19 +1,18 @@
-import {ExtendedSavedOrder, ShopifyOrder, SortProps} from "chums-types";
-import {SavedOrder, ShopifyAddress, ShopifyCustomer} from "chums-types/src/shopify/shopify-orders";
+import type {ExtendedSavedOrder, ShopifyOrder} from "chums-types";
+import type {SavedOrder, ShopifyAddress, ShopifyCustomer} from "chums-types/shopify";
 
 export type FilterOrderStatus = 'open' | 'closed' | 'cancelled' | 'any';
-export type FulfillmentStatus = 'open' | 'invoiced' | 'pending' | 'sending' | 'fulfilled' | 'error'|'partial';
+export type FulfillmentStatus = 'open' | 'invoiced' | 'pending' | 'sending' | 'fulfilled' | 'error' | 'partial';
 
 export interface FulfillmentList {
     [key: number | string]: FulfillmentStatus;
 }
+
 export interface FulfillmentErrorList {
-    [key:number|string]: string;
+    [key: number | string]: string;
 }
 
-export interface OrdersAgeList {
-    [key: number]: number
-}
+export type OrdersAgeList = Record<number, number>;
 
 export interface FetchOrdersOptions {
     status: FilterOrderStatus;

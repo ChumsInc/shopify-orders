@@ -1,18 +1,13 @@
-import React, {useState} from "react";
-import AlertList from "../ducks/alerts/AlertList";
-import OrdersStatusBar from "../ducks/orders/OrdersStatusBar";
-import OrdersList from "../ducks/orders/OrdersList";
-import {Tab, TabList} from "chums-components";
-import CurrentOrder from "../ducks/current-order/CurrentOrder";
-import FulfillmentList from "../ducks/orders/FulfillmentList";
+import {useState} from "react";
+import AlertList from "@/components/alerts/AlertList.tsx";
+import OrdersStatusBar from "@/components/orders-list/OrdersStatusBar.tsx";
+import OrdersList from "@/components/orders-list/OrdersList.tsx";
+import CurrentOrder from "@/components/current-order/CurrentOrder.tsx";
+import FulfillmentList from "@/components/fulfillments/FulfillmentList.tsx";
+import {Nav} from "react-bootstrap";
 
-const tabs: Tab[] = [
-    {id: 'orders', title: 'Current Order'},
-    {id: 'fulfillments', title: 'Fulfillments'}
-]
 export default function App() {
-    const [tab, setTab] = useState(tabs[0].id);
-    const onChangeTab = (tab: Tab) => setTab(tab.id);
+    const [tab, setTab] = useState('orders');
 
     return (
         <div>
@@ -23,7 +18,15 @@ export default function App() {
                     <OrdersList/>
                 </div>
                 <div className="col-lg-4 col-md-5 col-6">
-                    <TabList tabs={tabs} currentTabId={tab} onSelectTab={onChangeTab} className="mb-1"/>
+                    <Nav variant="tabs" activeKey={tab} className="mb-3">
+                        <Nav.Item>
+                            <Nav.Link eventKey="orders" onClick={() => setTab('orders')}>Current Order</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="fulfillments"
+                                      onClick={() => setTab('fulfillments')}>Fulfillments</Nav.Link>
+                        </Nav.Item>
+                    </Nav>
                     <div className="p-1">
                         {tab === 'orders' && (<CurrentOrder/>)}
                         {tab === 'fulfillments' && (<FulfillmentList/>)}

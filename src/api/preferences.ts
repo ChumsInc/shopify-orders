@@ -1,6 +1,4 @@
 const reLocal = /^local/;
-
-
 const sessionStoragePrefix:string = 'session/shopify-orders';
 const localStoragePrefix:string = 'local/shopify-orders';
 
@@ -17,9 +15,13 @@ function getStorage(key:string):Storage {
     return reLocal.test(key) ? window.localStorage : window.sessionStorage;
 }
 
+function canUseStorage() {
+    return typeof window !== 'undefined' && window.localStorage && window.sessionStorage;
+}
+
 export const setPreference = (key:string, value:any) => {
     try {
-        if (!global.window) {
+        if (!canUseStorage()) {
             return;
         }
         getStorage(key).setItem(key, JSON.stringify(value));
@@ -29,7 +31,7 @@ export const setPreference = (key:string, value:any) => {
 };
 
 export const clearPreference = (key:string) => {
-    if (typeof window === 'undefined') {
+    if (!canUseStorage()) {
         return;
     }
     getStorage(key).removeItem(key);
@@ -37,7 +39,7 @@ export const clearPreference = (key:string) => {
 
 export const getPreference = (key:string, defaultValue: any) => {
     try {
-        if (!global.window) {
+        if (!canUseStorage()) {
             return defaultValue;
         }
         const value = getStorage(key).getItem(key);

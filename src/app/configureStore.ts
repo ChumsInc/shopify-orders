@@ -1,19 +1,22 @@
 import {configureStore} from '@reduxjs/toolkit'
 import {combineReducers} from "redux";
-import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
-import alertsReducer from "../ducks/alerts";
+import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
+import alertsSlice from "../ducks/alerts";
 import ordersReducer from "../ducks/orders";
-import currentOrderReducer from "../ducks/current-order";
+import currentOrderSlice from "../ducks/current-order";
 
 
 const rootReducer = combineReducers({
-    alerts: alertsReducer,
+    [alertsSlice.reducerPath]: alertsSlice.reducer,
     orders: ordersReducer,
-    currentOrder: currentOrderReducer,
+    [currentOrderSlice.reducerPath]: currentOrderSlice.reducer,
 });
 
 const store = configureStore({
     reducer: rootReducer,
+    devTools: {
+        name: 'Chums / Shopify Orders'
+    }
 });
 
 export type RootState = ReturnType<typeof store.getState>

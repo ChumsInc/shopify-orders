@@ -1,7 +1,7 @@
-import {ExtendedSavedOrder, Fulfillment, ShopifyOrder, ShopifyRisk} from "chums-types";
-import {fetchJSON} from "chums-components";
-import {FetchOrdersOptions, LinkSalesOrderOptions, ShopifyOrderRow, TriggerImportOptions} from "../ducks/types";
-import {OrderRiskSummary} from "chums-types/src/shopify";
+import type {Fulfillment, ShopifyOrder} from "chums-types";
+import {fetchJSON} from "@chumsinc/ui-utils";
+import type {FetchOrdersOptions, LinkSalesOrderOptions, ShopifyOrderRow, TriggerImportOptions} from "../ducks/types";
+import type {OrderRiskSummary} from "chums-types/shopify";
 
 export const dateString = (date: string | null): string => {
     if (!date) {
@@ -103,7 +103,7 @@ export async function postFulfillOrder(arg: number | string): Promise<Fulfillmen
     }
 }
 
-export async function fetchRiskSummary(arg: string): Promise<OrderRiskSummary|null> {
+export async function fetchRiskSummary(arg: string): Promise<OrderRiskSummary | null> {
     try {
         const url = `/api/shopify/graphql/orders/${encodeURIComponent(arg)}/risk.json`;
         const res = await fetchJSON<{ riskSummary: OrderRiskSummary }>(url, {cache: 'no-cache'});

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <meta charSet="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <title>Shopify Orders / localhost</title>
+    <meta name="description" content="Shopify Orders"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;700&family=Roboto:wght@300;400;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/node_modules/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/css/intranet.css?v=1494436263">
+    <link rel="stylesheet" type="text/css" href="https://intranet.chums.com/css/chums.css">
+    <link rel="icon" type="image/x-icon" href="https://intranet.chums.com/favicon.ico"/>
+    <script src="https://intranet.chums.com/js/preferred-theme.js"></script>
+</head>
+<body>
+<header class="site-header">
+    <nav class="navbar navbar-chums navbar-expand-lg navbar-light bg-body-tertiary scroll-top justify-content-between">
+        <div class="site-logo">
+            <div class="logo-center">
+                <a href="/">
+                    <img class="logo" id="navbar-logo" alt="Chums Logo"
+                         src="https://intranet.chums.com/images/logos/Chums-Logo-Badge-Red-RGB.png"
+                         style="margin-top: 0;">
+                </a>
+            </div>
+        </div>
+        <div class="nav-item dropdown">
+            <button class="btn btn-link nav-link px-0 px-lg-2 py-2 dropdown-toggle d-flex align-items-center"
+                    id="bd-theme" type="button" aria-expanded="false"
+                    data-bs-toggle="dropdown" data-bs-display="static"
+                    aria-label="Toggle theme (auto)">
+                <span class="bi my-1 bi-circle-half theme-icon-active" aria-hidden="true"></span>
+                <span class="d-lg-none ms-2" id="bd-theme-text">Toggle theme</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme-text">
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center"
+                            data-bs-theme-value="light" aria-pressed="false" data-theme-icon="bi-sun-fill">
+                        <span class="bi me-2 opacity-50 bi-sun-fill" aria-hidden="true"></span>
+                        Light
+                        <span class="bi ms-auto d-none bi-check2" aria-hidden="true"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
+                            aria-pressed="false" data-theme-icon="bi-moon-fill">
+                        <span class="bi me-2 opacity-50 bi-moon-fill" aria-hidden="true"></span>
+                        Dark
+                        <span class="bi ms-auto d-none bi-check2" aria-hidden="true"></span>
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center active"
+                            data-bs-theme-value="auto" aria-pressed="true" data-theme-icon="bi-circle-half">
+                        <span class="bi me-2 opacity-50 bi-circle-half" aria-hidden="true"></span>
+                        Auto
+                        <span class="bi ms-auto d-none bi-check2" aria-hidden="true"></span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<main class="container-fluid">
+    <div>
+        <div>
+            <h1 id="top-title">Shopify Orders (localhost)</h1>
+            <div id="PageDescription">
+                <span id="PageDescriptionText"></span>
+            </div>
+        </div>
+    </div>
+    <div id="app">
+        <div class="alert alert-info"><strong>Loading</strong> app.</div>
+    </div>
+</main>
+<script type="module" src="/src/index.tsx"></script>
+<script src="https://intranet.chums.com/node_modules/@popperjs/core/dist/umd/popper.js"></script>
+<script src="https://intranet.chums.com/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script async src="https://intranet.chums.com/js/preferred-theme.js"></script>
+</body>
+</html>
