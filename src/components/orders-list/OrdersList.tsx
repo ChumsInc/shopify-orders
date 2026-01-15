@@ -14,16 +14,18 @@ import DeliveryAddress from "./DeliveryAddress.tsx";
 import {loadOrder} from "@/ducks/current-order/actions.ts";
 import {selectPage, selectRowsPerPage, selectSort, selectSortedList} from "@/ducks/orders/selectors.ts";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
-import Badge from "react-bootstrap/Badge";
 import ImportStatusBadge from "@/components/orders-list/importStatusBadge.tsx";
+import ShippingField from "@/components/orders-list/ShippingField.tsx";
 
 const fields: SortableTableField<ShopifyOrderRow>[] = [
     {
         field: 'sage_SalesOrderNo',
         title: <span className="text-nowrap">Order #</span>,
         render: (row) => (
-            <OrderLink
-                order_id={row.id}>{row.import_status === 'successful' ? row.sage_SalesOrderNo : row.id}</OrderLink>),
+            <OrderLink order_id={row.id}>
+                {row.import_status === 'successful' ? row.sage_SalesOrderNo : row.id}
+            </OrderLink>
+        ),
         sortable: true
     },
     {
@@ -52,15 +54,7 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
     },
     {
         field: 'shipping_lines', title: 'Shipping', render: (row) => (
-            <>
-                <Badge bg="secondary">{row.ShipVia}</Badge>
-                {row.shopify_order?.shipping_lines?.length && (
-                    <small className="shipping-description ms-1"
-                           title={row.shopify_order?.shipping_lines.map(line => line.title).join('; ')}>
-                        {row.shopify_order?.shipping_lines.map(line => line.title).join('; ')}
-                    </small>
-                )}
-            </>
+            <ShippingField shipVia={row.ShipVia} order={row.shopify_order}/>
         ), className: 'shipping-description',
         sortable: true
     },
@@ -74,6 +68,7 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
         field: 'OrderStatus',
         title: <span className="text-nowrap">SO Status</span>,
         render: (row) => row.OrderStatus || '',
+        align: "center",
         sortable: true
     },
     {
@@ -86,7 +81,7 @@ const fields: SortableTableField<ShopifyOrderRow>[] = [
         field: 'total_price_usd',
         title: 'Total',
         render: (row) => numeral(row.shopify_order?.total_price_set?.presentment_money?.amount ?? 0).format('$0,0.00'),
-        className: 'right',
+        align: 'end',
         sortable: true,
     },
 ]

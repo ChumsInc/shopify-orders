@@ -1,4 +1,3 @@
-import {Fragment} from 'react';
 import {now} from "@/utils/utils.ts";
 import type {ShopifyOrder} from "chums-types";
 import classNames from "classnames";
@@ -49,7 +48,7 @@ const gwBadgeName = (gateway: string): string => {
 
 const GatewayBadge = ({gateway}: { gateway: string }) => {
     return (
-        <Badge bg="dark" text={gwBadgeName(gateway)}/>
+        <Badge bg="secondary">{gwBadgeName(gateway)}</Badge>
     )
 };
 
@@ -76,7 +75,6 @@ const ShopifyOrderStatus = ({order}: { order: ShopifyOrder | null }) => {
         return null;
     }
     const {
-        gateway,
         fulfillment_status,
         total_discounts,
         risks = [],
@@ -86,25 +84,28 @@ const ShopifyOrderStatus = ({order}: { order: ShopifyOrder | null }) => {
     const hasDiscount = Number(total_discounts) > 0;
     const [risk] = risks?.filter(risk => Number(risk.score) > 0);
     return (
-        <Fragment>
-            <GatewayBadge gateway={gateway}/>
+        <div style={{fontSize: '0.75rem'}} className="d-flex flex-wrap justify-content-start gap-1">
+            <GatewayBadge gateway={order.payment_gateway_names.join(',')}/>
             {!!risk && (
                 <Badge bg="danger">
                     {risk.merchant_message}: {risk.recommendation}
                 </Badge>
             )}
             {(days > 1 || !!order.closed_at) && (
-                <Badge text={'days:' + days} bg={daysType(days)} className={classNames({'text-dark': days < 3})}/>
+                <Badge bg={daysType(days)} className={classNames({'text-dark': days < 3})}>
+                    <span className="me-1">days:</span>{days}
+                </Badge>
             )}
             {/*<PaymentBadge financial_status={financial_status}/>*/}
             <FulfillmentBadge fulfillment_status={fulfillment_status}/>
+
             {tagList.map(tag => (
-                <Badge key={tag} text={tag} bg="info"/>
+                <Badge key={tag} bg="info" text="dark">{tag}</Badge>
             ))}
-            {hasDiscount && (<Badge bg="primary" text="disc"/>)}
+            {hasDiscount && (<Badge bg="primary">disc</Badge>)}
             {!!order.cancelled_at && (
                 <Badge bg="warning">Cancelled: {dayjs(order.cancelled_at).format('MM/DD/YYYY')}</Badge>)}
-        </Fragment>
+        </div>
     );
 }
 
