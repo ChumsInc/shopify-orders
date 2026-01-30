@@ -4,7 +4,7 @@ import Alert from "react-bootstrap/Alert";
 
 export default function OrderImportInfo() {
     const order = useSelector(selectCurrentOrder);
-    if (!order) {
+    if (!order || order.import_status === 'require-validation') {
         return null;
     }
 

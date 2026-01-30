@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {selectCurrentOrder, selectCurrentOrderStatus} from "@/ducks/current-order/index.ts";
-import OrderImportButton from "@/components/orders-list/OrderImportButton.tsx";
+import OrderImportButton from "@/components/current-order/OrderImportButton.tsx";
 import LinkSalesOrder from "./LinkSalesOrder.tsx";
 import OrderRisks from "./OrderRisks.tsx";
 import OrderItems from "./OrderItems.tsx";
