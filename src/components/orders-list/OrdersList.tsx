@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {type SortableTableField, StandaloneSortableTable, TablePagination} from "@chumsinc/sortable-tables";
+import {type SortableTableField, SortableTable, TablePagination} from "@chumsinc/sortable-tables";
 import type {ShopifyOrderRow} from "@/ducks/types.ts";
 import ShopifyOrderStatus from "./ShopifyOrderStatus.tsx";
 import type {SortProps} from "chums-types";
@@ -114,7 +114,7 @@ const OrdersList = () => {
 
     return (
         <div>
-            <StandaloneSortableTable fields={fields} currentSort={sort}
+            <SortableTable fields={fields} currentSort={sort}
                                      data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
                                      keyField="id" onChangeSort={sortChangeHandler}
                                      selected={row => row.id === current?.id}

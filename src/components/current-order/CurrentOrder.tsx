@@ -15,6 +15,7 @@ import Alert from 'react-bootstrap/Alert'
 import ProgressBar from "react-bootstrap/ProgressBar";
 import dayjs from "dayjs";
 import ImportStatusBadge from "@/components/orders-list/importStatusBadge.tsx";
+import {Card, Col, Row} from "react-bootstrap";
 
 const CurrentOrder = () => {
     const dispatch = useAppDispatch();
@@ -61,9 +62,11 @@ const CurrentOrder = () => {
             {current.import_status === 'linked' && (
                 <h4>{current.shopify_order?.name} linked to {current.sage_SalesOrderNo}</h4>
             )}
-            <div className="card">
-                <div className="card-body">
-                    <h5 className="card-title">{[current.shopify_order?.customer?.first_name, current.shopify_order?.customer?.last_name].join(' ')}</h5>
+            <Card>
+                <Card.Header as="h3">
+                    {[current.shopify_order?.customer?.first_name, current.shopify_order?.customer?.last_name].join(' ')}
+                </Card.Header>
+                <Card.Body>
                     <div>{current.shopify_order?.customer?.email}</div>
                     {!!current.shopify_order?.created_at && (
                         <div>Order Date: {dayjs(current.shopify_order.created_at).format('MM/DD/YYYY')}
@@ -80,9 +83,42 @@ const CurrentOrder = () => {
                         <a className="ms-3" href={current.shopify_order?.order_status_url}
                            target="_blank">{current.shopify_order?.name}</a>
                     </div>
-                </div>
-            </div>
-
+                </Card.Body>
+                {current.shopify_order && (
+                    <Card.Body>
+                        <Row className="g-3">
+                            <Col>
+                                <Card.Title>Billing Address</Card.Title>
+                                <address style={{fontStyle: 'italic', fontSize: 'small'}}>
+                                    <div>{current.shopify_order.billing_address.name}</div>
+                                    <div>{current.shopify_order.billing_address.address1}</div>
+                                    <div>{current.shopify_order.billing_address.address2}</div>
+                                    <div>
+                                        <span className="me-1">{current.shopify_order.billing_address.city}</span>
+                                        <span className="me-1">{current.shopify_order.billing_address.province_code}</span>
+                                        <span className="me-1">{current.shopify_order.billing_address.country_code}</span>
+                                        <span className="me-1">{current.shopify_order.billing_address.zip}</span>
+                                    </div>
+                                </address>
+                            </Col>
+                            <Col>
+                                <Card.Title>Delivery Address</Card.Title>
+                                <address style={{fontStyle: 'italic', fontSize: 'small'}}>
+                                    <div>{current.shopify_order.shipping_address.name}</div>
+                                    <div>{current.shopify_order.shipping_address.address1}</div>
+                                    <div>{current.shopify_order.shipping_address.address2}</div>
+                                    <div>
+                                        <span className="me-1">{current.shopify_order.shipping_address.city}</span>
+                                        <span className="me-1">{current.shopify_order.shipping_address.province_code}</span>
+                                        <span className="me-1">{current.shopify_order.shipping_address.country_code}</span>
+                                        <span className="me-1">{current.shopify_order.shipping_address.zip}</span>
+                                    </div>
+                                </address>
+                            </Col>
+                        </Row>
+                    </Card.Body>
+                )}
+            </Card>
             <OrderRisks/>
             <OrderItems/>
             <OrderJSON/>
