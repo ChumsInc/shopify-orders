@@ -43,14 +43,10 @@ function FulfillmentIcon({status}: { status: OrderDisplayFulfillmentStatus | str
         case 'OPEN':
         case 'UNFULFILLED':
             return <span className="bi-box-seam me-1"/>;
-        case 'PARTIALLY_FULFILLED':
-        case 'FULFILLED':
-        case 'PENDING_FULFILLMENT':
-            return <span className="bi-box-seam-fill me-1"/>;
         case 'IN_PROGRESS':
         case 'SCHEDULED':
             return <span className="bi-clock-history me-1"/>;
         default:
-            return <span className="bi-exclamation-triangle-fill me-1"/>;
+            return <span className="bi-box-seam-fill me-1"/>;
     }
 }
