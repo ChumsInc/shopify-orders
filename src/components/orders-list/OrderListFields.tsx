@@ -56,7 +56,7 @@ export const orderListFields: SortableTableField<ShopifyOrderRow>[] = [
     },
     {
         field: 'displayFulfillmentStatus',
-        title: 'Status',
+        title: 'Order Info',
         className: 'status-badges',
         render: (row) => (<ShopifyOrderStatus order={row.graphqlOrder}/>),
     },
