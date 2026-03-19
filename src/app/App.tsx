@@ -14,8 +14,10 @@ export default function App() {
             <AlertList/>
             <div className="row g-3">
                 <div className="col-lg-8 col-md-7 col-6">
-                    <OrdersStatusBar/>
-                    <OrdersList/>
+                    <div className="container-fluid">
+                        <OrdersStatusBar/>
+                        <OrdersList/>
+                    </div>
                 </div>
                 <div className="col-lg-4 col-md-5 col-6">
                     <Nav variant="tabs" activeKey={tab} className="mb-3">

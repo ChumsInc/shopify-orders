@@ -1,9 +1,8 @@
 import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
-import {useSelector} from "react-redux";
-import {selectImporting} from "@/ducks/orders/selectors.ts";
 import {importOrder} from "@/ducks/current-order/actions.ts";
 import {Button, Spinner} from "react-bootstrap";
 import {selectCurrentOrderStatus} from "@/ducks/current-order";
+import {selectOrdersStatus} from "@/ducks/orders/openOrdersSlice.ts";
 
 
 export interface OrderImportButtonProps {
@@ -13,7 +12,7 @@ export interface OrderImportButtonProps {
 
 export default function OrderImportButton({id, import_status}: OrderImportButtonProps) {
     const dispatch = useAppDispatch();
-    const importing = useSelector(selectImporting);
+    const ordersStatus = useAppSelector(selectOrdersStatus);
     const status = useAppSelector(selectCurrentOrderStatus);
 
     const importHandler = () => {
@@ -27,12 +26,14 @@ export default function OrderImportButton({id, import_status}: OrderImportButton
         return null
     }
 
+    const disabled = ordersStatus === 'loading' || import_status === 'successful' || import_status === 'require-validation' || status !== 'idle';
+
     return (
         <Button type="button" variant="primary" size="sm"
                 className="ms-1"
-                disabled={import_status === 'successful' || import_status === 'require-validation' || !!importing || status !== 'idle'}
+                disabled={disabled}
                 onClick={importHandler}>
-            {!!importing && (
+            {status === 'importing' && (
                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-1"/>)}
             {!import_status ? 'Import' : 'Retry Import'}
         </Button>

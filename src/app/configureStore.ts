@@ -2,14 +2,16 @@ import {configureStore} from '@reduxjs/toolkit'
 import {combineReducers} from "redux";
 import {type TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import alertsSlice from "../ducks/alerts";
-import ordersReducer from "../ducks/orders";
 import currentOrderSlice from "../ducks/current-order";
+import fulfillmentStatusSlice from "@/ducks/orders/fulfillmentStatusSlice.ts";
+import openOrdersSlice from "@/ducks/orders/openOrdersSlice.ts";
 
 
 const rootReducer = combineReducers({
     [alertsSlice.reducerPath]: alertsSlice.reducer,
-    orders: ordersReducer,
+    [fulfillmentStatusSlice.reducerPath]: fulfillmentStatusSlice.reducer,
     [currentOrderSlice.reducerPath]: currentOrderSlice.reducer,
+    [openOrdersSlice.reducerPath]: openOrdersSlice.reducer,
 });
 
 const store = configureStore({

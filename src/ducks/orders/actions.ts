@@ -1,41 +1,33 @@
-import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import type {SortProps} from "chums-types";
+import {createAsyncThunk} from "@reduxjs/toolkit";
+import type {ExtendedSavedOrder} from "chums-types";
 import type {RootState} from "@/app/configureStore";
 import {fetchOrders} from "../../api";
-import type {FilterOrderStatus, ShopifyOrderRow} from "../types";
-import {selectFetchOptions, selectLoading, selectNextPendingFulfillment} from "./selectors";
 import {fulfillOrder} from "../current-order/actions";
+import {selectNextPendingFulfillment} from "@/ducks/orders/fulfillmentStatusSlice.ts";
+import {selectOrdersStatus} from "@/ducks/orders/openOrdersSlice.ts";
 
-export const loadOrders = createAsyncThunk<ShopifyOrderRow[], void, {state:RootState}>(
+export const loadOrders = createAsyncThunk<ExtendedSavedOrder[], void, { state: RootState }>(
     'orders/list/load',
-    async (_, {getState}) => {
-        const state = getState()
-        const options = selectFetchOptions(state);
-        return await fetchOrders(options);
+    async () => {
+        return await fetchOrders();
     }, {
         condition: (_, {getState}) => {
             const state = getState();
-            return !selectLoading(state);
+            return selectOrdersStatus(state) === 'idle';
         }
     }
 )
 
 
-export const fulfillAllOrders = createAsyncThunk<void, void, {state:RootState}>(
+export const fulfillAllOrders = createAsyncThunk<void, void, { state: RootState }>(
     'orders/fulfillAll',
     async (_, {getState, dispatch}) => {
         const state = getState();
-        const keys = selectNextPendingFulfillment(state)
-        for await (const key of keys) {
-            await dispatch(fulfillOrder(key));
+        const orders = selectNextPendingFulfillment(state)
+        for await (const order of orders) {
+            await dispatch(fulfillOrder(order.id));
         }
     }
 );
 
-export const setFilterStatus = createAction<FilterOrderStatus>('orders/setStatus');
-export const setCreatedMin = createAction<string | null>('orders/setCreatedMin');
-export const setCreatedMax = createAction<string | null>('orders/setCreatedMax');
-export const setPage = createAction<number>('orders/setPage');
-export const setRowsPerPage = createAction<number>('orders/setRowsPerPage');
-export const setSort = createAction<SortProps<ShopifyOrderRow>>('orders/setSort');
 

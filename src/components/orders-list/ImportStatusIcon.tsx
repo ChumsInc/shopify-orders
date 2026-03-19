@@ -9,7 +9,7 @@ export default function ImportStatusIcon({import_status}: ImportStatusIconProps)
     return (<span className={`bi-${icon}`}/>);
 }
 
-function importStatusIcon(import_status: string): string | null {
+function importStatusIcon(import_status: string|null): string | null {
     switch (import_status) {
         case 'successful':
             return 'check-lg';
@@ -20,6 +20,7 @@ function importStatusIcon(import_status: string): string | null {
         case 'importing':
             return 'hourglass-split';
         case 'waiting':
+        case null:
             return 'stopwatch'
         case 'require-validation':
             return 'exclamation-diamond-fill';

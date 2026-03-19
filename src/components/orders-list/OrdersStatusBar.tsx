@@ -8,7 +8,7 @@ export default function OrdersStatusBar() {
                 <OrdersForm/>
             </div>
             <div className="col">
-                <OrderStatusProgress />
+                <OrderStatusProgress/>
             </div>
         </div>
     )

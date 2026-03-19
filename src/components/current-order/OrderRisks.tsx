@@ -2,10 +2,9 @@ import {useAppDispatch} from "@/app/configureStore.ts";
 import {useSelector} from "react-redux";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
 import {loadRiskSummary} from "@/ducks/current-order/actions.ts";
-import LegacyRiskTable from "./LegacyRiskTable.tsx";
 import RiskSummary from "./RiskSummary.tsx";
 
-export default function OrderRisks(){
+export default function OrderRisks() {
     const dispatch = useAppDispatch();
     const order = useSelector(selectCurrentOrder);
 
@@ -13,11 +12,13 @@ export default function OrderRisks(){
         if (!order) {
             return;
         }
-        dispatch(loadRiskSummary(order.sage_SalesOrderNo))
+        dispatch(loadRiskSummary(order.id))
     }
-    if (!order || !order.shopify_order) {
+    if (!order || !order.graphqlOrder) {
         return null;
     }
+
+    const expanded = order.graphqlOrder.risk?.recommendation?.toLowerCase() !== 'accept';
 
     return (
         <>
@@ -33,8 +34,7 @@ export default function OrderRisks(){
                     </button>
                 </div>
             </div>
-            <RiskSummary/>
-            <LegacyRiskTable/>
+            <RiskSummary risk={order.graphqlOrder.risk} expanded={expanded}/>
         </>
     )
 }

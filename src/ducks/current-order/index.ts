@@ -1,12 +1,13 @@
 import {fulfillOrder, importOrder, linkOrder, loadOrder, loadRiskSummary,} from "./actions";
 import {createSlice} from "@reduxjs/toolkit";
 import {loadOrders} from "../orders/actions";
-import type {ShopifyOrderRow} from "../types";
 import {dismissAlert} from "@/ducks/alerts";
+import type {ExtendedSavedOrder} from "chums-types/shopify";
+import type {OrderDisplayFulfillmentStatus} from "chums-types/shopify-graphql";
 
 export interface CurrentOrderState {
-    order: ShopifyOrderRow | null;
-    status: 'idle' | 'loading' | 'saving' | 'fulfilling' | 'rejected';
+    order: ExtendedSavedOrder | null;
+    status: 'idle' | 'loading' | 'importing' | 'saving' | 'fulfilling' | 'rejected';
 }
 
 
@@ -26,10 +27,14 @@ const currentOrderSlice = createSlice({
     extraReducers: builder => {
         builder
             .addCase(loadOrders.fulfilled, (state, action) => {
+                state.status = 'idle';
                 if (state.order) {
-                    const [current] = action.payload.filter(row => Number(row.id) === Number(state.order!.id));
+                    const current = action.payload.find(row => Number(row.id) === Number(state.order!.id));
                     state.order = current ?? null;
                 }
+            })
+            .addCase(importOrder.pending, (state) => {
+                state.status = 'importing';
             })
             .addCase(importOrder.fulfilled, (state, action) => {
                 state.status = 'idle';
@@ -63,8 +68,8 @@ const currentOrderSlice = createSlice({
             })
             .addCase(loadRiskSummary.fulfilled, (state, action) => {
                 state.status = 'idle';
-                if (state.order && state.order.shopify_order) {
-                    state.order.shopify_order.risk = action.payload;
+                if (state.order && state.order.graphqlOrder && action.payload) {
+                    state.order.graphqlOrder.risk = action.payload;
                 }
             })
             .addCase(loadRiskSummary.rejected, (state) => {
@@ -72,20 +77,20 @@ const currentOrderSlice = createSlice({
             })
             .addCase(fulfillOrder.pending, (state, action) => {
                 state.status = 'fulfilling';
-                if (state.order && state.order.shopify_order && Number(state.order.id) === Number(action.meta.arg)) {
-                    state.order.shopify_order.fulfillment_status = 'sending';
+                if (state.order && state.order.graphqlOrder && Number(state.order.id) === Number(action.meta.arg)) {
+                    state.order.graphqlOrder.displayFulfillmentStatus = 'PENDING_FULFILLMENT' as OrderDisplayFulfillmentStatus.PendingFulfillment;
                 }
             })
             .addCase(fulfillOrder.fulfilled, (state, action) => {
                 state.status = 'idle';
-                if (state.order && state.order.shopify_order && Number(state.order.id) === Number(action.meta.arg)) {
-                    state.order.shopify_order.fulfillment_status = 'fulfilled';
+                if (state.order && state.order.graphqlOrder && Number(state.order.id) === Number(action.meta.arg)) {
+                    state.order.graphqlOrder.displayFulfillmentStatus = 'FULFILLED' as OrderDisplayFulfillmentStatus.Fulfilled;
                 }
             })
             .addCase(fulfillOrder.rejected, (state, action) => {
                 state.status = 'rejected';
-                if (state.order && state.order.shopify_order && Number(state.order.id) === Number(action.meta.arg)) {
-                    state.order.shopify_order.fulfillment_status = !!state.order.InvoiceNo ? 'invoiced' : 'open';
+                if (state.order && state.order.graphqlOrder && Number(state.order.id) === Number(action.meta.arg)) {
+                    state.order.graphqlOrder.displayFulfillmentStatus = 'REQUEST_DECLINED' as OrderDisplayFulfillmentStatus.RequestDeclined;
                 }
             })
             .addCase(dismissAlert, (state, action) => {

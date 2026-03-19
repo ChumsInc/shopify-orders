@@ -1,53 +1,39 @@
 import {useSelector} from "react-redux";
-import {selectFulfillmentsErrors, selectFulfillmentsList} from "@/ducks/orders/selectors.ts";
-import OrderLink from "../orders-list/OrderLink.tsx";
 import FulfillAllButton from "./FulfillAllButton.tsx";
-import classNames from "classnames";
-import type {FulfillmentStatus} from "@/ducks/types.ts";
 import ProgressBar from "react-bootstrap/ProgressBar";
-
-const FulfillmentStatusIcon = ({status}: { status?: FulfillmentStatus }) => {
-    switch (status) {
-    case 'fulfilled':
-        return (<span className="bi-check-circle-fill me-1" />)
-    case 'error':
-        return (<span className="bi-exclamation-triangle-fill me-1" />)
-    }
-    return null;
-}
+import {selectAvailableFulfillments} from "@/ducks/orders/fulfillmentStatusSlice.ts";
+import FulfillmentListRow from "@/components/fulfillments/FulfillmentListRow.tsx";
 
 export default function FulfillmentList() {
-    const list = useSelector(selectFulfillmentsList)
-    const errors = useSelector(selectFulfillmentsErrors);
-    const submitList = Object.keys(list).filter(value => list[value] !== 'open');
-    const pending = Object.keys(list).filter(value => list[value] === 'pending').length;
+    const list = useSelector(selectAvailableFulfillments);
+    const fulfilled = list.filter(order => order.status === 'FULFILLED').length;
+    const pending = list.filter(order => order.status === 'PENDING_FULFILLMENT').length;
+    const unfulfilled = list.filter(order => order.status === 'UNFULFILLED').length;
+
+
+    if (!list.length) {
+        return null;
+    }
 
     return (
         <div>
             <FulfillAllButton/>
             <ProgressBar className="my-3">
-                <ProgressBar min={0} max={submitList.length} now={submitList.length - pending}
-                             color="success"/>
-                <ProgressBar min={0} max={submitList.length} now={pending} color="info"/>
+                <ProgressBar now={fulfilled / list.length * 100} variant="success"/>
+                <ProgressBar now={pending / list.length * 100} variant="info" striped animated/>
+                <ProgressBar now={unfulfilled / list.length * 100} variant="light"/>
             </ProgressBar>
-            <table className="table table-xs table-hover">
+            <table className="table table-sm table-hover">
                 <thead>
                 <tr>
                     <th>Order ID</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                {submitList.map(key => (
-                    <tr key={key}
-                        className={classNames({'text-danger': !!errors[key], 'text-success': list[key] === 'fulfilled'})}>
-                        <td><OrderLink order_id={key}>{key}</OrderLink></td>
-                        <td>
-                            <FulfillmentStatusIcon status={list[key]} />
-                            {!errors[key] && <span>{list[key]}</span>}
-                            {!!errors[key] && <span>{errors[key]}</span>}
-                        </td>
-                    </tr>
+                {list.map(order => (
+                    <FulfillmentListRow order={order} key={order.id}/>
                 ))}
                 </tbody>
             </table>

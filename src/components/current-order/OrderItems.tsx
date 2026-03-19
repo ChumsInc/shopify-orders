@@ -4,7 +4,7 @@ import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
 const OrderItems = () => {
     const order = useSelector(selectCurrentOrder);
 
-    if (!order || !order.shopify_order) {
+    if (!order || !order.graphqlOrder) {
         return null;
     }
 
@@ -21,12 +21,12 @@ const OrderItems = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {order.shopify_order?.line_items?.map(row => (
+                {order.graphqlOrder.lineItems.nodes.map(row => (
                     <tr key={row.id}>
                         <td>{row.sku}</td>
                         <td>{row.name}</td>
                         <td className="text-end">{row.quantity}</td>
-                        <td className="text-end">{row.price}</td>
+                        <td className="text-end">{row.originalTotalSet.shopMoney.amount}</td>
                     </tr>
                 ))}
                 </tbody>

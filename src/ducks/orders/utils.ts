@@ -18,30 +18,29 @@ export const orderSorter = (sort: SortProps<ShopifyOrderRow>) =>
                         ? (a.id > b.id ? 1 : -1)
                         : ((a[field] ?? '').toLowerCase() > (b[field] ?? '').toLowerCase() ? 1 : -1)
                 ) * sortMod;
-            case 'customer': {
-                const aVal = [a.shopify_order?.customer.first_name ?? '', a.shopify_order?.customer.last_name ?? ''].join(' ').toLowerCase();
-                const bVal = [b.shopify_order?.customer.first_name ?? '', b.shopify_order?.customer.last_name ?? ''].join(' ').toLowerCase();
-                return (aVal === bVal
-                    ? (a.id > b.id ? 1 : -1)
-                    : (aVal > bVal ? 1 : -1)) * sortMod;
-            }
-            case 'gateway':
-            case 'created_at':
+            case 'customer':
+                return (a.graphqlOrder?.customer?.displayName ?? '').localeCompare(b.graphqlOrder?.customer?.displayName ?? '') * sortMod;
+            case 'paymentGatewayNames':
+                return (a.graphqlOrder?.paymentGatewayNames?.join(', ') ?? '').localeCompare(b.graphqlOrder?.paymentGatewayNames?.join(', ') ?? '') === 0
+                    ? a.id > b.id ? 1 : -1
+                    : (a.graphqlOrder?.paymentGatewayNames?.join(', ') ?? '').localeCompare(b.graphqlOrder?.paymentGatewayNames?.join(', ') ?? '') * sortMod;
+            case 'createdAt':
+            case 'closedAt':
                 return (
-                    (a.shopify_order![field] ?? '') === (b.shopify_order![field] ?? '')
+                    (a.graphqlOrder?.[field] ?? '').localeCompare(b.graphqlOrder?.[field] ?? '') === 0
                         ? (a.id > b.id ? 1 : -1)
-                        : ((a.shopify_order![field] ?? '').toLowerCase() > (b.shopify_order![field] ?? '').toLowerCase() ? 1 : -1)
+                        : (a.graphqlOrder?.[field] ?? '').localeCompare(b.graphqlOrder?.[field] ?? '')
                 ) * sortMod;
-            case 'shipping_address': {
-                const aVal = [a.shopify_order!.shipping_address.city ?? '', a.shopify_order!.shipping_address.province_code ?? '', a.shopify_order!.shipping_address.zip].join(' ').toLowerCase();
-                const bVal = [b.shopify_order!.shipping_address.city ?? '', b.shopify_order!.shipping_address.province_code ?? '', b.shopify_order!.shipping_address.zip].join(' ').toLowerCase();
-                return (aVal === bVal
+            case 'shippingAddress': {
+                const aVal = [a.graphqlOrder?.shippingAddress?.city ?? '', a.graphqlOrder?.shippingAddress?.provinceCode ?? '', a.graphqlOrder?.shippingAddress?.zip ?? ''].join(' ').toLowerCase();
+                const bVal = [b.graphqlOrder?.shippingAddress?.city ?? '', b.graphqlOrder?.shippingAddress?.provinceCode ?? '', b.graphqlOrder?.shippingAddress?.zip ?? ''].join(' ').toLowerCase();
+                return (aVal.localeCompare(bVal) === 0
                     ? (a.id > b.id ? 1 : -1)
-                    : (aVal > bVal ? 1 : -1)) * sortMod;
+                    : aVal.localeCompare(bVal)) * sortMod;
             }
-            case 'total_price_usd':
-                const aVal = Number(a.shopify_order?.total_price_usd ?? 0)
-                const bVal = Number(b.shopify_order?.total_price_usd ?? 0)
+            case 'currentTotalPriceSet':
+                const aVal = Number(a.graphqlOrder?.currentTotalPriceSet?.shopMoney?.amount ?? 0)
+                const bVal = Number(b.graphqlOrder?.currentTotalPriceSet?.shopMoney?.amount ?? 0)
                 return (aVal === bVal
                     ? (a.id > b.id ? 1 : -1)
                     : (aVal > bVal ? 1 : -1)) * sortMod;
@@ -88,8 +87,8 @@ export const buildOrdersAges = (orders: ShopifyOrderRow[]): OrdersAgeList => {
     const list: OrdersAgeList = {};
     const today = new Date();
     orders.forEach(order => {
-        const daysOld: number = businessDayjs(order.shopify_order?.created_at ?? today)
-            .businessDaysDiff(businessDayjs(order.shopify_order?.closed_at ?? today));
+        const daysOld: number = businessDayjs(order.graphqlOrder?.createdAt ?? today)
+            .businessDaysDiff(businessDayjs(order.graphqlOrder?.closedAt ?? today));
         if (list[daysOld] === undefined) {
             list[daysOld] = 0;
         }

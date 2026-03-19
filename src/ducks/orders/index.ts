@@ -1,30 +1,21 @@
-import type {SortProps} from "chums-types";
-import type {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList, ShopifyOrderRow} from "../types";
+import type {ExtendedSavedOrder, SortProps} from "chums-types";
+import type {FilterOrderStatus, FulfillmentErrorList, FulfillmentList, OrdersAgeList} from "../types";
 import {createReducer} from "@reduxjs/toolkit";
-import {getPreference, localStorageKeys, sessionStorageKeys, setPreference} from "@/api/preferences";
+import {getPreference, localStorageKeys, sessionStorageKeys} from "@/api/preferences";
 import {buildFulfillmentsList, buildOrdersAges, defaultOrdersSorter} from "./utils";
-import {
-    fulfillAllOrders,
-    loadOrders,
-    setCreatedMax,
-    setCreatedMin,
-    setFilterStatus,
-    setPage,
-    setRowsPerPage,
-    setSort
-} from "./actions";
+import {fulfillAllOrders, loadOrders} from "./actions";
 import {fulfillOrder, importOrder, linkOrder, loadOrder} from "../current-order/actions";
 import dayjs from "dayjs";
 
 export interface OrdersState {
-    list: ShopifyOrderRow[];
+    list: ExtendedSavedOrder[];
     loading: boolean;
     status: FilterOrderStatus;
     created_at_min: string | null;
     created_at_max: string | null;
     page: number;
     rowsPerPage: number;
-    sort: SortProps<ShopifyOrderRow>;
+    sort: SortProps<ExtendedSavedOrder>;
     fulfillments: FulfillmentList;
     errors: FulfillmentErrorList;
     ages: OrdersAgeList;
@@ -79,27 +70,6 @@ const ordersReducer = createReducer(initialOrdersState, (builder) => {
                     action.payload
                 ].sort(defaultOrdersSorter)
             }
-        })
-        .addCase(setFilterStatus, (state, action) => {
-            state.status = action.payload;
-        })
-        .addCase(setCreatedMin, (state, action) => {
-            setPreference(sessionStorageKeys.fromDate, action.payload ?? null);
-            state.created_at_min = action.payload ?? null;
-        })
-        .addCase(setCreatedMax, (state, action) => {
-            setPreference(sessionStorageKeys.toDate, action.payload ?? null);
-            state.created_at_max = action.payload ?? null;
-        })
-        .addCase(setPage, (state, action) => {
-            state.page = action.payload;
-        })
-        .addCase(setRowsPerPage, (state, action) => {
-            state.rowsPerPage = action.payload;
-            setPreference(localStorageKeys.rowsPerPage, action.payload);
-        })
-        .addCase(setSort, (state, action) => {
-            state.sort = action.payload;
         })
         .addCase(importOrder.pending, (state, action) => {
             state.importing = action.meta.arg.id;

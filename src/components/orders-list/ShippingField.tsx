@@ -1,20 +1,21 @@
-import type {ShopifyOrder} from "chums-types";
 import Badge from "react-bootstrap/esm/Badge";
+import type {Order} from "chums-types/shopify-graphql";
 
 export interface ShippingFieldProps {
-    shipVia: string|null;
-    order: ShopifyOrder|null;
+    shipVia: string | null;
+    order: Order | null;
 }
-export default function ShippingField({shipVia, order}:ShippingFieldProps) {
+
+export default function ShippingField({shipVia, order}: ShippingFieldProps) {
+    const title = order?.shippingLines.nodes?.map(line => line.code).join('; ');
     return (
-        <div className="d-flex flex-wrap flex-row gap-1">
-            <Badge bg="info" text="dark">{shipVia}</Badge>
-            {order?.shipping_lines?.length && (
-                <small className="text-secondary ms-1"
-                       title={order?.shipping_lines.map(line => line.title).join('; ')}>
-                    {order?.shipping_lines.map(line => line.title).join('; ')}
+        <div className="d-flex flex-wrap flex-column gap-1">
+            <div><Badge bg="info" text="dark">{shipVia}</Badge></div>
+            <div>
+                <small className="text-secondary ms-1" title={title}>
+                    {order?.shippingLines.nodes.map(line => line.title).join('; ')}
                 </small>
-            )}
+            </div>
         </div>
     )
 }

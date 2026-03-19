@@ -1,29 +1,37 @@
 import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {useSelector} from "react-redux";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
-import {selectOrderFulfillment} from "@/ducks/orders/selectors.ts";
 import {fulfillOrder} from "@/ducks/current-order/actions.ts";
+import {selectCurrentFulfillment} from "@/ducks/orders/fulfillmentStatusSlice.ts";
+import {Button, type ButtonProps} from "react-bootstrap";
 
-
-const FulfillButton = () => {
+const FulfillButton = ({...rest}: ButtonProps) => {
     const dispatch = useAppDispatch();
     const order = useSelector(selectCurrentOrder);
-    const fulfillment = useAppSelector(state => selectOrderFulfillment(state, order?.id ?? 0));
+    const fulfillment = useAppSelector(selectCurrentFulfillment);
 
     const clickHandler = () => {
-        if (order && order.shopify_order) {
-            dispatch(fulfillOrder(order.shopify_order?.id))
+        if (order && order.graphqlOrder) {
+            dispatch(fulfillOrder(order.graphqlOrder.legacyResourceId))
         }
     }
 
     if (!order) {
         return null;
     }
+
+    const disabled = !fulfillment || fulfillment.status === 'FULFILLED'
+        || fulfillment.status === 'PENDING_FULFILLMENT' || fulfillment.status === 'IN_PROGRESS'
+        || fulfillment.status === 'ON_HOLD' ;
+    const variant = (fulfillment?.status === 'REQUEST_DECLINED' || fulfillment?.status === 'ON_HOLD')
+        ? 'danger'
+        : 'success';
     return (
-        <button type="button" className="btn btn-sm btn-success"
-                disabled={fulfillment !== 'invoiced'} onClick={clickHandler}>
-            Fulfill Order
-        </button>
+        <Button type="button" size="sm" variant={variant}
+                disabled={disabled}
+                onClick={clickHandler} {...rest}>
+            Fulfill Order: {fulfillment?.status}
+        </Button>
     )
 }
 

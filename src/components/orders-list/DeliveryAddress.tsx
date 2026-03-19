@@ -1,6 +1,6 @@
-import type {ShopifyAddress} from "chums-types/shopify";
+import type {MailingAddress, Maybe} from "chums-types/shopify-graphql";
 
-const DeliveryAddress = ({address}: { address?: ShopifyAddress }) => {
+const DeliveryAddress = ({address}: { address?: Maybe<MailingAddress> }) => {
     if (!address) {
         return null;
     }
@@ -8,9 +8,9 @@ const DeliveryAddress = ({address}: { address?: ShopifyAddress }) => {
         <div>
             <span className="me-1">{address.city},</span>
             <strong className="me-1">
-                {address.province_code},
+                {address.provinceCode},
             </strong>
-            {address.country_code !== 'US' && <strong className="me-1">{address.country_code}</strong>}
+            {address.countryCodeV2 !== 'US' && <strong className="me-1">{address.countryCodeV2}</strong>}
             <small className="me-1">{address.zip}</small>
         </div>
     )

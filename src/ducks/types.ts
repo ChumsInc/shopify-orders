@@ -1,5 +1,8 @@
-import type {ExtendedSavedOrder, ShopifyOrder} from "chums-types";
-import type {SavedOrder, ShopifyAddress, ShopifyCustomer} from "chums-types/shopify";
+import type {ExtendedSavedOrder} from "chums-types";
+import type {SavedOrder} from "chums-types/shopify";
+import type {MailingAddress, Order} from "chums-types/shopify-graphql";
+import type {ErrorObject} from "serialize-error";
+
 
 export type FilterOrderStatus = 'open' | 'closed' | 'cancelled' | 'any';
 export type FulfillmentStatus = 'open' | 'invoiced' | 'pending' | 'sending' | 'fulfilled' | 'error' | 'partial';
@@ -31,9 +34,32 @@ export interface LinkSalesOrderOptions {
 }
 
 export type ShopifyOrderRow =
-    Pick<ExtendedSavedOrder, 'sage_SalesOrderNo' | 'OrderStatus' | 'InvoiceNo' | 'CancelReasonCode' | 'ShipVia' | 'import_status' | 'shopify_order'>
-    & Partial<Pick<ShopifyOrder, 'id' | 'created_at' | 'shipping_lines' | 'total_price_usd' | 'fulfillment_status' | 'gateway' | 'tags' | 'financial_status' | 'risks' | 'processed_at' | 'closed_at' | 'cancelled_at' | 'total_discounts' | 'customer' | 'shipping_address'>>
-    & Partial<Pick<ShopifyAddress, 'city' | 'province_code' | 'zip' | 'country_code'>>
-    & Partial<Pick<ShopifyCustomer, 'first_name' | 'last_name'>>
-    & Pick<ShopifyOrder, 'id'>
+    ExtendedSavedOrder
+    & Pick<ExtendedSavedOrder, 'id' | 'gid' | 'sage_SalesOrderNo' | 'OrderStatus' | 'InvoiceNo' | 'CancelReasonCode'
+        | 'ShipVia' | 'import_status' | 'graphqlOrder'>
+    & Partial<Pick<Order, 'legacyResourceId' | 'createdAt' | 'shippingLines' | 'totalPriceSet' | 'paymentGatewayNames'
+    | 'tags' | 'displayFinancialStatus' | 'risks' | 'processedAt' | 'closedAt' | 'cancellation'
+    | 'totalDiscountsSet' | 'customer' | 'shippingAddress' | 'displayFulfillmentStatus'| 'currentTotalPriceSet'>>
+    & Partial<Pick<MailingAddress, 'name' | 'city' | 'provinceCode' | 'zip' | 'countryCodeV2'>>
     & Partial<Pick<SavedOrder, 'import_result'>>
+
+export interface CreatedFulfillment {
+    id: string;
+    legacyResourceId: string;
+    status: string;
+    createdAt: string;
+    order: {
+        id: string;
+        legacyResourceId: string;
+    };
+    trackingInfo: {
+        company: string;
+        number: string;
+        url: string;
+    }[]
+}
+
+export interface CreatedFulfillmentResponse {
+    fulfillment: CreatedFulfillment|null;
+    error: ErrorObject|null;
+}

@@ -1,11 +1,18 @@
-import {useSelector} from "react-redux";
-import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
 import classNames from "classnames";
+import type {OrderRiskSummary} from "chums-types/shopify";
+import {useState} from "react";
+import {Button, Col, Collapse, Row} from "react-bootstrap";
 
-export default function RiskSummary() {
-    const order = useSelector(selectCurrentOrder);
-    const risk = order?.shopify_order?.risk ?? null;
+export interface RiskSummaryProps {
+    risk?: OrderRiskSummary;
+    expanded?: boolean;
+}
 
+export default function RiskSummary({
+                                        risk,
+                                        expanded = false,
+                                    }: RiskSummaryProps) {
+    const [show, setShow] = useState(expanded);
     if (!risk) {
         return null;
     }
@@ -16,10 +23,21 @@ export default function RiskSummary() {
     })
     return (
         <div>
-            <div className={recommendationClassName}><strong>Shopify Recommendation: {risk.recommendation}</strong></div>
-            {!!risk.assessments.length && (
-                <>
-                    <div>Risk Level: {risk.assessments[0].riskLevel}</div>
+            <Row className="g-3 align-items-center">
+                <Col>
+                    <div className={recommendationClassName}>
+                        <strong>Shopify Recommendation: {risk.recommendation}</strong>
+                    </div>
+                </Col>
+                <Col xs="auto">
+                    <Button variant={show ? 'secondary' : 'outline-secondary'} size="sm"
+                            onClick={() => setShow(!show)}>
+                        Show Summary
+                    </Button>
+                </Col>
+            </Row>
+            <Collapse in={show}>
+                <div>
                     <table className="table table-xs table-hover">
                         <thead>
                         <tr>
@@ -28,7 +46,7 @@ export default function RiskSummary() {
                         </tr>
                         </thead>
                         <tbody>
-                        {risk.assessments[0].facts
+                        {risk.assessments?.[0]?.facts
                             .map((row, index) => (
                                 <tr key={index}>
                                     <td><em>{row.description}</em></td>
@@ -40,8 +58,8 @@ export default function RiskSummary() {
                             ))}
                         </tbody>
                     </table>
-                </>
-            )}
+                </div>
+            </Collapse>
         </div>
     )
 }

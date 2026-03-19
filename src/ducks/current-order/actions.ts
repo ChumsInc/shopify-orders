@@ -1,13 +1,13 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import type {Fulfillment} from "chums-types";
-import type {LinkSalesOrderOptions, ShopifyOrderRow, TriggerImportOptions} from "../types";
+import type {ExtendedSavedOrder} from "chums-types";
+import type {CreatedFulfillmentResponse, LinkSalesOrderOptions, TriggerImportOptions} from "../types";
 import {fetchOrder, fetchRiskSummary, postFulfillOrder, postLinkSalesOrder, retryImportOrder} from "../../api";
 import type {RootState} from "@/app/configureStore";
-import {selectImporting, selectOrderFulfillment} from "../orders/selectors";
-import type {OrderRiskSummary} from "chums-types/shopify";
+import type {OrderRiskSummary} from "chums-types/shopify-graphql";
 import {selectCurrentOrderStatus} from "@/ducks/current-order/index.ts";
+import {selectFulfillmentById} from "@/ducks/orders/fulfillmentStatusSlice.ts";
 
-export const importOrder = createAsyncThunk<ShopifyOrderRow | null, TriggerImportOptions>(
+export const importOrder = createAsyncThunk<ExtendedSavedOrder | null, TriggerImportOptions>(
     'orders/import',
     async (arg,) => {
         return await retryImportOrder(arg);
@@ -15,13 +15,13 @@ export const importOrder = createAsyncThunk<ShopifyOrderRow | null, TriggerImpor
     {
         condition: (_, {getState}) => {
             const state = getState() as RootState;
-            return !selectImporting(state) && selectCurrentOrderStatus(state) === 'idle';
+            return selectCurrentOrderStatus(state) === 'idle';
         }
     }
 );
 
 
-export const loadOrder = createAsyncThunk<ShopifyOrderRow | null, ShopifyOrderRow | undefined>(
+export const loadOrder = createAsyncThunk<ExtendedSavedOrder | null, ExtendedSavedOrder | undefined>(
     'currentOrder/load',
     async (arg) => {
         if (!arg) {
@@ -36,7 +36,7 @@ export const loadOrder = createAsyncThunk<ShopifyOrderRow | null, ShopifyOrderRo
     }
 )
 
-export const linkOrder = createAsyncThunk<ShopifyOrderRow | null, LinkSalesOrderOptions>(
+export const linkOrder = createAsyncThunk<ExtendedSavedOrder | null, LinkSalesOrderOptions>(
     'currentOrder/link',
     async (arg) => {
         return await postLinkSalesOrder(arg);
@@ -51,7 +51,7 @@ export const linkOrder = createAsyncThunk<ShopifyOrderRow | null, LinkSalesOrder
     }
 )
 
-export const loadRiskSummary = createAsyncThunk<OrderRiskSummary | null, string>(
+export const loadRiskSummary = createAsyncThunk<OrderRiskSummary | null, string | number>(
     'currentOrder/loadRiskSummary',
     async (arg) => {
         return await fetchRiskSummary(arg);
@@ -64,15 +64,15 @@ export const loadRiskSummary = createAsyncThunk<OrderRiskSummary | null, string>
 )
 
 
-export const fulfillOrder = createAsyncThunk<Fulfillment | null, string | number>(
+export const fulfillOrder = createAsyncThunk<CreatedFulfillmentResponse | null, string | number>(
     'currentOrder/fulfillOrder',
     async (arg) => {
         return await postFulfillOrder(arg);
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
-            const fulfillment = selectOrderFulfillment(state, arg);
-            return fulfillment === 'invoiced' || fulfillment === 'pending';
+            const fulfillment = selectFulfillmentById(state, `${arg}`);
+            return fulfillment.status !== 'PENDING_FULFILLMENT' && fulfillment.status !== 'IN_PROGRESS'
         }
     }
 )

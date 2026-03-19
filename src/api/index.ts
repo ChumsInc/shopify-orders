@@ -1,7 +1,8 @@
-import type {Fulfillment, ShopifyOrder} from "chums-types";
+import type {ExtendedSavedOrder, ShopifyOrder} from "chums-types";
 import {fetchJSON} from "@chumsinc/ui-utils";
-import type {FetchOrdersOptions, LinkSalesOrderOptions, ShopifyOrderRow, TriggerImportOptions} from "../ducks/types";
-import type {OrderRiskSummary} from "chums-types/shopify";
+import type {CreatedFulfillmentResponse, LinkSalesOrderOptions, TriggerImportOptions} from "../ducks/types";
+import type {OrderRiskSummary} from "chums-types/shopify-graphql";
+import {allowErrorResponseHandler} from "@chumsinc/ui-utils/src/fetch.ts";
 
 export const dateString = (date: string | null): string => {
     if (!date) {
@@ -14,10 +15,10 @@ export const dateString = (date: string | null): string => {
     return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
 }
 
-export async function fetchOrder(arg: number | string): Promise<ShopifyOrderRow | null> {
+export async function fetchOrder(arg: number | string): Promise<ExtendedSavedOrder | null> {
     try {
-        const url = `/api/shopify/orders/fetch/${encodeURIComponent(arg)}`
-        const res = await fetchJSON<{ order: ShopifyOrderRow }>(url, {cache: "no-cache"});
+        const url = `/api/shopify/graphql/query/orders/${encodeURIComponent(arg)}.json`
+        const res = await fetchJSON<{ order: ExtendedSavedOrder }>(url, {cache: "no-cache"});
         return res?.order ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -29,21 +30,10 @@ export async function fetchOrder(arg: number | string): Promise<ShopifyOrderRow 
     }
 }
 
-export async function fetchOrders(arg: FetchOrdersOptions): Promise<ShopifyOrderRow[]> {
+export async function fetchOrders(): Promise<ExtendedSavedOrder[]> {
     try {
-        const options = new URLSearchParams();
-        if (arg.status !== 'open' && !arg.created_at_min) {
-            return Promise.reject(new Error('Missing parameters for created_at_min'));
-        }
-        options.set('status', arg.status);
-        if (arg.status !== 'open' && arg.created_at_min) {
-            options.set('created_at_min', dateString(arg.created_at_min));
-        }
-        if (arg.status !== 'open' && arg.created_at_max) {
-            options.set('created_at_max', dateString(arg.created_at_max));
-        }
-        const url = `/api/shopify/orders/fetch?${options.toString()}`;
-        const res = await fetchJSON<{ orders: ShopifyOrderRow[] }>(url, {cache: 'no-cache'});
+        const url = `/api/shopify/graphql/query/orders.json?status=open`;
+        const res = await fetchJSON<{ orders: ExtendedSavedOrder[] }>(url, {cache: 'no-cache'});
         return res?.orders ?? [];
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -55,7 +45,7 @@ export async function fetchOrders(arg: FetchOrdersOptions): Promise<ShopifyOrder
     }
 }
 
-export async function retryImportOrder(arg: TriggerImportOptions): Promise<ShopifyOrderRow | null> {
+export async function retryImportOrder(arg: TriggerImportOptions): Promise<ExtendedSavedOrder | null> {
     try {
         const url = `/api/shopify/orders/import/${encodeURIComponent(arg.id)}`;
         const res = await fetchJSON<{ order: ShopifyOrder }>(url, {cache: 'no-cache', method: 'POST'})
@@ -73,10 +63,12 @@ export async function retryImportOrder(arg: TriggerImportOptions): Promise<Shopi
     }
 }
 
-export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<ShopifyOrderRow | null> {
+export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<ExtendedSavedOrder | null> {
     try {
-        const url = `/api/shopify/orders/${encodeURIComponent(arg.id)}/link/${encodeURIComponent(arg.salesOrderNo)}`;
-        const res = await fetchJSON<{ order: ShopifyOrderRow }>(url, {cache: 'no-cache', method: 'POST'})
+        const url = `/api/shopify/orders/:id/link/:salesOrderNo.json`
+            .replace(':id', encodeURIComponent(arg.id))
+            .replace(':salesOrderNo', encodeURIComponent(arg.salesOrderNo));
+        const res = await fetchJSON<{ order: ExtendedSavedOrder }>(url, {cache: 'no-cache', method: 'POST'})
         return res?.order ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -88,11 +80,11 @@ export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<Sh
     }
 }
 
-export async function postFulfillOrder(arg: number | string): Promise<Fulfillment | null> {
+export async function postFulfillOrder(arg: number | string): Promise<CreatedFulfillmentResponse | null> {
     try {
-        const url = `/api/shopify/fulfillment-orders/${encodeURIComponent(arg)}/fulfill`;
-        const res = await fetchJSON<{ fulfillment: Fulfillment }>(url, {method: 'POST'});
-        return res?.fulfillment ?? null;
+        const url = `/api/shopify/graphql/mutate/orders/${encodeURIComponent(arg)}/fulfill.json`;
+        const res = await fetchJSON<CreatedFulfillmentResponse>(url, {method: 'POST'}, allowErrorResponseHandler);
+        return res ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postFulfillOrder()", err.message);
@@ -103,9 +95,9 @@ export async function postFulfillOrder(arg: number | string): Promise<Fulfillmen
     }
 }
 
-export async function fetchRiskSummary(arg: string): Promise<OrderRiskSummary | null> {
+export async function fetchRiskSummary(arg: number | string): Promise<OrderRiskSummary | null> {
     try {
-        const url = `/api/shopify/graphql/orders/${encodeURIComponent(arg)}/risk.json`;
+        const url = `/api/shopify/graphql/query/orders/${encodeURIComponent(arg)}/risk.json`;
         const res = await fetchJSON<{ riskSummary: OrderRiskSummary }>(url, {cache: 'no-cache'});
         return res?.riskSummary ?? null;
     } catch (err: unknown) {
