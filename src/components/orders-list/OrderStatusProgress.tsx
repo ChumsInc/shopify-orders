@@ -1,4 +1,3 @@
-import {useSelector} from 'react-redux';
 import classNames from 'classnames';
 import ProgressBar from "react-bootstrap/ProgressBar";
 import type {Variant} from "react-bootstrap/esm/types";
@@ -18,7 +17,7 @@ function progressClassName(days: number): Variant {
 }
 
 const OrderStatusProgress = () => {
-    const ages = useSelector(selectOrdersAges);
+    const ages = useAppSelector(selectOrdersAges);
     const status = useAppSelector(selectOrdersStatus);
     const total: number = Object.values(ages).reduce((pv: number, cv: number) => +pv + +cv, 0);
 

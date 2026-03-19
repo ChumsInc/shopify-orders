@@ -1,4 +1,3 @@
-import {useSelector} from "react-redux";
 import {selectCurrentOrder, selectCurrentOrderStatus} from "@/ducks/current-order/index.ts";
 import OrderImportButton from "@/components/current-order/OrderImportButton.tsx";
 import LinkSalesOrder from "./LinkSalesOrder.tsx";
@@ -15,13 +14,13 @@ import Alert from 'react-bootstrap/Alert'
 import dayjs from "dayjs";
 import ImportStatusBadge from "@/components/orders-list/importStatusBadge.tsx";
 import {Card, Col, Row, Spinner} from "react-bootstrap";
-import {selectCurrentFulfillment} from "@/ducks/orders/fulfillmentStatusSlice.ts";
+import {selectCurrentFulfillment} from "@/ducks/common-selectors.ts";
 import FulfillmentBadge from "@/components/common/FulfillmentBadge.tsx";
 
 export default function CurrentOrder() {
     const dispatch = useAppDispatch();
     const status = useAppSelector(selectCurrentOrderStatus);
-    const current = useSelector(selectCurrentOrder);
+    const current = useAppSelector(selectCurrentOrder);
     const fulfillment = useAppSelector(selectCurrentFulfillment);
 
     const closeHandler = () => dispatch(loadOrder());

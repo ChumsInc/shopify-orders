@@ -1,12 +1,11 @@
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
 import {loadRiskSummary} from "@/ducks/current-order/actions.ts";
 import RiskSummary from "./RiskSummary.tsx";
 
 export default function OrderRisks() {
     const dispatch = useAppDispatch();
-    const order = useSelector(selectCurrentOrder);
+    const order = useAppSelector(selectCurrentOrder);
 
     const clickHandler = () => {
         if (!order) {

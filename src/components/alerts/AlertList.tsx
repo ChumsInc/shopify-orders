@@ -1,11 +1,10 @@
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {dismissAlert, selectAlerts} from "@/ducks/alerts";
 import ContextAlert from "./ContextAlert.tsx";
 
 export default function AlertList() {
     const dispatch = useAppDispatch();
-    const list = useSelector(selectAlerts);
+    const list = useAppSelector(selectAlerts);
 
     return (
         <div>

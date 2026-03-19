@@ -2,8 +2,7 @@ import {useEffect} from 'react';
 import {SortableTable, TablePagination} from "@chumsinc/sortable-tables";
 import type {ShopifyOrderRow} from "@/ducks/types.ts";
 import type {SortProps} from "chums-types";
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {loadOrders} from "@/ducks/orders/actions.ts";
 import classNames from "classnames";
 import {loadOrder} from "@/ducks/current-order/actions.ts";
@@ -29,11 +28,11 @@ const rowClassName = (row: ShopifyOrderRow) => {
 
 const OrdersList = () => {
     const dispatch = useAppDispatch();
-    const list = useSelector(selectSortedOrders);
-    const page = useSelector(selectOrdersPage);
-    const rowsPerPage = useSelector(selectOrdersRowsPerPage);
-    const sort = useSelector(selectOrdersSort);
-    const current = useSelector(selectCurrentOrder);
+    const list = useAppSelector(selectSortedOrders);
+    const page = useAppSelector(selectOrdersPage);
+    const rowsPerPage = useAppSelector(selectOrdersRowsPerPage);
+    const sort = useAppSelector(selectOrdersSort);
+    const current = useAppSelector(selectCurrentOrder);
 
     useEffect(() => {
         dispatch(loadOrders());

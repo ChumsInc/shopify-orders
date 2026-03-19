@@ -2,7 +2,6 @@ import {createEntityAdapter, createSelector, createSlice} from "@reduxjs/toolkit
 import type {OrderDisplayFulfillmentStatus} from "chums-types/shopify-graphql";
 import {loadOrders} from "@/ducks/orders/actions.ts";
 import {fulfillOrder, loadOrder} from "@/ducks/current-order/actions.ts";
-import {selectCurrentOrder} from "@/ducks/current-order";
 
 export interface OrderFulfillment {
     id: string;
@@ -96,9 +95,3 @@ export const selectNextPendingFulfillment = createSelector(
         return list.filter(order => order.status === 'UNFULFILLED')
     });
 
-export const selectCurrentFulfillment = createSelector(
-    [selectAllFulfillments, selectCurrentOrder],
-    (list, current) => {
-        return list.find(order => order.id === `${current?.id}`) ?? null
-    }
-)

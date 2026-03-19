@@ -1,8 +1,8 @@
-import {useSelector} from "react-redux";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
+import {useAppSelector} from "@/app/configureStore.ts";
 
 const OrderItems = () => {
-    const order = useSelector(selectCurrentOrder);
+    const order = useAppSelector(selectCurrentOrder);
 
     if (!order || !order.graphqlOrder) {
         return null;

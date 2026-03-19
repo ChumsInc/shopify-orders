@@ -1,11 +1,10 @@
-import {useAppDispatch} from "@/app/configureStore.ts";
-import {useSelector} from "react-redux";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {fulfillAllOrders} from "@/ducks/orders/actions.ts";
 import {selectAvailableFulfillments} from "@/ducks/orders/fulfillmentStatusSlice.ts";
 
 export default function FulfillAllButton() {
     const dispatch = useAppDispatch();
-    const fulfillmentList = useSelector(selectAvailableFulfillments);
+    const fulfillmentList = useAppSelector(selectAvailableFulfillments);
     const invoicedCount = fulfillmentList.filter(order => !!order.invoiceNo).length;
     const sendingCount = fulfillmentList.filter(order => order.status === 'IN_PROGRESS').length;
     const countToFulfill = invoicedCount - sendingCount;

@@ -9,9 +9,9 @@ import openOrdersSlice from "@/ducks/orders/openOrdersSlice.ts";
 
 const rootReducer = combineReducers({
     [alertsSlice.reducerPath]: alertsSlice.reducer,
-    [fulfillmentStatusSlice.reducerPath]: fulfillmentStatusSlice.reducer,
     [currentOrderSlice.reducerPath]: currentOrderSlice.reducer,
     [openOrdersSlice.reducerPath]: openOrdersSlice.reducer,
+    [fulfillmentStatusSlice.reducerPath]: fulfillmentStatusSlice.reducer,
 });
 
 const store = configureStore({

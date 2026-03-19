@@ -1,12 +1,11 @@
 import {type ChangeEvent, type FormEvent, useState} from 'react';
-import {useSelector} from 'react-redux';
-import {useAppDispatch} from "@/app/configureStore.ts";
+import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
 import {linkOrder} from "@/ducks/current-order/actions.ts";
 
 const LinkSalesOrder = () => {
     const dispatch = useAppDispatch();
-    const current = useSelector(selectCurrentOrder)
+    const current = useAppSelector(selectCurrentOrder)
     const [salesOrderNo, setSalesOrderNo] = useState('');
 
     const onChange = (ev: ChangeEvent<HTMLInputElement>) => {
