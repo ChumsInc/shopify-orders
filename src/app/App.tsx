@@ -5,6 +5,8 @@ import OrdersList from "@/components/orders-list/OrdersList.tsx";
 import CurrentOrder from "@/components/current-order/CurrentOrder.tsx";
 import FulfillmentList from "@/components/fulfillments/FulfillmentList.tsx";
 import {Nav} from "react-bootstrap";
+import {ErrorBoundary} from "react-error-boundary";
+import AppErrorAlert from "@/app/AppErrorAlert.tsx";
 
 export default function App() {
     const [tab, setTab] = useState('orders');
@@ -15,8 +17,10 @@ export default function App() {
             <div className="row g-3">
                 <div className="col-lg-8 col-md-7 col-6">
                     <div className="container-fluid">
-                        <OrdersStatusBar/>
-                        <OrdersList/>
+                        <ErrorBoundary FallbackComponent={AppErrorAlert}>
+                            <OrdersStatusBar/>
+                            <OrdersList/>
+                        </ErrorBoundary>
                     </div>
                 </div>
                 <div className="col-lg-4 col-md-5 col-6">
@@ -30,8 +34,10 @@ export default function App() {
                         </Nav.Item>
                     </Nav>
                     <div className="p-1">
-                        {tab === 'orders' && (<CurrentOrder/>)}
-                        {tab === 'fulfillments' && (<FulfillmentList/>)}
+                        <ErrorBoundary FallbackComponent={AppErrorAlert}>
+                            {tab === 'orders' && (<CurrentOrder/>)}
+                            {tab === 'fulfillments' && (<FulfillmentList/>)}
+                        </ErrorBoundary>
                     </div>
                 </div>
             </div>
