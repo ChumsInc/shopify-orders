@@ -16,6 +16,7 @@ import ImportStatusBadge from "@/components/orders-list/importStatusBadge.tsx";
 import {Card, Col, Row, Spinner} from "react-bootstrap";
 import {selectCurrentFulfillment} from "@/ducks/common-selectors.ts";
 import FulfillmentBadge from "@/components/common/FulfillmentBadge.tsx";
+import ShopifyOrderStatusBadges from "@/components/common/ShopifyOrderStatusBadges.tsx";
 
 export default function CurrentOrder() {
     const dispatch = useAppDispatch();
@@ -73,6 +74,9 @@ export default function CurrentOrder() {
                         </Col>
                     </Row>
                 </Card.Header>
+                <Card.Body className="border-bottom">
+                    <ShopifyOrderStatusBadges order={current.graphqlOrder} />
+                </Card.Body>
                 <Card.Body>
                     <div>
                         {current.graphqlOrder?.email}

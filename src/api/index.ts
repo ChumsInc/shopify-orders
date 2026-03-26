@@ -1,19 +1,15 @@
-import type {ExtendedSavedOrder, ShopifyOrder} from "chums-types";
+import type {ExtendedSavedOrder} from "chums-types";
 import {fetchJSON} from "@chumsinc/ui-utils";
-import type {CreatedFulfillmentResponse, LinkSalesOrderOptions, TriggerImportOptions} from "../ducks/types";
+import type {
+    CreatedFulfillmentResponse,
+    LinkSalesOrderOptions,
+    SageImportError,
+    SageImportResponseV2,
+    TriggerImportOptions
+} from "../ducks/types";
 import type {OrderRiskSummary} from "chums-types/shopify-graphql";
 import {allowErrorResponseHandler} from "@chumsinc/ui-utils/src/fetch.ts";
-
-export const dateString = (date: string | null): string => {
-    if (!date) {
-        return '';
-    }
-    const d = new Date(date);
-    if (!d.valueOf()) {
-        return '';
-    }
-    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-}
+import {isSageImportResponse} from "@/utils/utils.ts";
 
 export async function fetchOrder(arg: number | string): Promise<ExtendedSavedOrder | null> {
     try {
@@ -47,12 +43,12 @@ export async function fetchOrders(): Promise<ExtendedSavedOrder[]> {
 
 export async function retryImportOrder(arg: TriggerImportOptions): Promise<ExtendedSavedOrder | null> {
     try {
-        const url = `/api/shopify/orders/import/${encodeURIComponent(arg.id)}`;
-        const res = await fetchJSON<{ order: ShopifyOrder }>(url, {cache: 'no-cache', method: 'POST'})
-        if (!res?.order) {
-            return null;
+        const url = `/api/shopify/graphql/orders/${encodeURIComponent(arg.id)}/import.json?retry=true`;
+        const res = await fetchJSON<SageImportResponseV2 | SageImportError>(url, {cache: 'no-cache', method: 'POST'})
+        if (res && isSageImportResponse(res)) {
+            return res.order;
         }
-        return await fetchOrder(res.order.id);
+        return null;
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchImportOrder()", err.message);

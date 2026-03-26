@@ -6,6 +6,7 @@
     "@chumsinc/json-view": "^2.0.0",
     "@chumsinc/sortable-tables": "^3.0.0",
     "@chumsinc/ui-utils": "^2.1.3",
+    "@emotion/css": "^11.13.5",
     "@reduxjs/toolkit": "^2.2.7",
     "chums-types": "github:ChumsInc/chums-types",
     "classnames": "^2.2.6",
@@ -36,6 +37,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.0.0",
     "serialize-error": "^13.0.1",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.39.1",
     "vite": "^8.0.0"
   },

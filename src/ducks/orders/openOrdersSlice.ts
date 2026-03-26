@@ -6,6 +6,8 @@ import {dismissAlert} from "@/ducks/alerts";
 import {fulfillOrder, importOrder, linkOrder, loadOrder} from "@/ducks/current-order/actions.ts";
 import {buildOrdersAges, orderSorter} from "@/ducks/orders/utils.ts";
 import type {OrderDisplayFulfillmentStatus} from "chums-types/shopify-graphql";
+import {LocalStore} from "@chumsinc/ui-utils";
+import {rowsPerPageKey} from "@/utils/utils.ts";
 
 const adapter = createEntityAdapter<ShopifyOrderRow, string>({
     selectId: (arg) => `${arg.id}`,
@@ -27,7 +29,7 @@ const extraState: OrdersSliceState = {
     sort: {field: 'sage_SalesOrderNo', ascending: true},
     search: '',
     page: 0,
-    rowsPerPage: 25,
+    rowsPerPage: LocalStore.getItem<number>(rowsPerPageKey, 25),
 }
 
 const openOrdersSlice = createSlice({

@@ -17,6 +17,8 @@ import {
     setSort
 } from "@/ducks/orders/openOrdersSlice.ts";
 import {orderListFields} from "@/components/orders-list/OrderListFields.tsx";
+import {LocalStore} from "@chumsinc/ui-utils";
+import {rowsPerPageKey} from "@/utils/utils.ts";
 
 
 const rowClassName = (row: ShopifyOrderRow) => {
@@ -36,11 +38,14 @@ const OrdersList = () => {
 
     useEffect(() => {
         dispatch(loadOrders());
-    }, [])
+    }, [dispatch])
 
     const sortChangeHandler = (sort: SortProps<ShopifyOrderRow>) => dispatch(setSort(sort));
     const pageChangeHandler = (page: number) => dispatch(setPage(page));
-    const rowsPerPageChangeHandler = (rpp: number) => dispatch(setRowsPerPage(rpp));
+    const rowsPerPageChangeHandler = (rpp: number) => {
+        LocalStore.setItem<number>(rowsPerPageKey, rpp);
+        dispatch(setRowsPerPage(rpp));
+    }
     const onSelectRow = (row: ShopifyOrderRow) => {
         dispatch(loadOrder(row))
     }

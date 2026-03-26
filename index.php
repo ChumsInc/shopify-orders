@@ -21,4 +21,5 @@ $ui = new WebUI2([
     "contentFile" => 'body.inc.php'
 ]);
 $ui->addViteManifest()
+    ->addCSS('dist/badges.css')
     ->render();

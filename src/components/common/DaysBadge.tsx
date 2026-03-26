@@ -1,9 +1,8 @@
 import {businessDayjs} from "@/utils/date-utils.ts";
 import {now} from "@/utils/utils.ts";
-import classNames from "classnames";
 import Badge from "react-bootstrap/esm/Badge";
 import type {Variant} from "react-bootstrap/esm/types";
-
+import {css, cx} from "@emotion/css";
 
 export interface DaysBadgeProps {
     createdAt: string;
@@ -14,13 +13,18 @@ export default function DaysBadge({createdAt}: DaysBadgeProps) {
     if (days <= 1) {
         return null;
     }
-    const className = classNames('border', {
-        'text-dark': days < 3,
-        'border-dark': days < 3,
-    })
+    const className = cx('border d-inline-flex align-items-center',
+        css`
+            --bs-badge-padding-y: calc(0.35em - 2px);
+        `,
+        {
+            'text-dark': days < 4,
+            'border-danger': days > 4,
+        }
+    )
     return (
         <Badge bg={daysVariant(days)} className={className}>
-            <span className="bi-calendar-range-fill me-1" />{days}
+            <span className="bi-calendar-range-fill me-1"/>{days}
         </Badge>
     )
 }

@@ -23,18 +23,18 @@ export default defineConfig({
     build: {
         manifest: true,
         sourcemap: true,
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks(id) {
-                    if (id.includes('node_modules')) {
-                        return 'vendor'
-                    }
-                    if (id.includes('src/components')) {
-                        return 'components';
-                    }
+                codeSplitting: {
+                    groups: [
+                        {name: 'react-vendor', test: /node_modules\/react/, priority: 20},
+                        {name: 'chums-ui', test: /node_modules\/@chumsinc/, priority: 15},
+                        {name: 'vendor', test: /node_modules/, priority: 10},
+                        {name: 'common'}
+                    ]
                 }
             }
-        }
+        },
     },
     server: {
         port: 8080,

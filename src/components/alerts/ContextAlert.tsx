@@ -5,7 +5,7 @@ export interface ContextAlertProps extends AlertProps {
     count?: number;
 
 }
-export default function ContextAlert({context, count, variant, onClose, dismissible, children, ...rest}: ContextAlertProps) {
+export default function ContextAlert({context, count, variant, onClose, children, ...rest}: ContextAlertProps) {
     return (
         <Alert variant={variant} onClose={onClose} dismissible {...rest}>
             <Alert.Heading>

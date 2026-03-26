@@ -1,4 +1,4 @@
-import {type ChangeEvent, type FormEvent, useState} from 'react';
+import {type ChangeEvent, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "@/app/configureStore.ts";
 import {selectCurrentOrder} from "@/ducks/current-order/index.ts";
 import {linkOrder} from "@/ducks/current-order/actions.ts";
@@ -12,15 +12,14 @@ const LinkSalesOrder = () => {
         setSalesOrderNo(ev.target.value)
     }
 
-    const onSubmit = (ev: FormEvent) => {
-        ev.preventDefault();
+    const onSubmit = () => {
         if (current?.id) {
             dispatch(linkOrder({id: current?.id, salesOrderNo}))
         }
     }
 
     return (
-        <form className="input-group input-group-sm mb-3" onSubmit={onSubmit}>
+        <form className="input-group input-group-sm mb-3" action={onSubmit}>
             <div className="input-group-text">Sales Order #</div>
             <input type="text" pattern="/[\dA-Z]{7}/" className="form-control"
                    value={salesOrderNo}

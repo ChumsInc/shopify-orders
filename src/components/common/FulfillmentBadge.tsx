@@ -11,7 +11,7 @@ export default function FulfillmentBadge({status}: FulfillmentBadgeProps) {
         return null;
     }
     return (
-        <Badge bg={fulfillmentBadgeVariant(status)}>
+        <Badge bg={fulfillmentBadgeVariant(status)} >
             <FulfillmentIcon status={status}/>
             {status}
         </Badge>

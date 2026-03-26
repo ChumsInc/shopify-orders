@@ -5,8 +5,9 @@ import ImportStatusBadge from "@/components/orders-list/importStatusBadge.tsx";
 import {friendlyDate} from "@/utils/date-utils.ts";
 import DeliveryAddress from "@/components/orders-list/DeliveryAddress.tsx";
 import ShippingField from "@/components/orders-list/ShippingField.tsx";
-import ShopifyOrderStatus from "@/components/orders-list/ShopifyOrderStatus.tsx";
+import ShopifyOrderStatusBadges from "@/components/common/ShopifyOrderStatusBadges.tsx";
 import numeral from "numeral";
+import SageOrderStatusBadge from "@/components/common/SageOrderStatusBadge.tsx";
 
 export const orderListFields: SortableTableField<ShopifyOrderRow>[] = [
     {
@@ -24,8 +25,8 @@ export const orderListFields: SortableTableField<ShopifyOrderRow>[] = [
         title: 'Status',
         render: (row) => (
             <div className="d-flex gap-1 align-items-center">
-                <div><ImportStatusBadge status={row.import_status}/></div>
-                <div className="badge bg-light border rounded text-dark">{row.OrderStatus ?? '-'}</div>
+                <ImportStatusBadge status={row.import_status}/>
+                <SageOrderStatusBadge status={row.OrderStatus ?? '-'} />
             </div>
         ),
         sortable: true
@@ -58,7 +59,7 @@ export const orderListFields: SortableTableField<ShopifyOrderRow>[] = [
         field: 'displayFulfillmentStatus',
         title: 'Order Info',
         className: 'status-badges',
-        render: (row) => (<ShopifyOrderStatus order={row.graphqlOrder}/>),
+        render: (row) => (<ShopifyOrderStatusBadges order={row.graphqlOrder}/>),
     },
     // {
     //     field: 'OrderStatus',

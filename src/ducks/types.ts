@@ -63,3 +63,16 @@ export interface CreatedFulfillmentResponse {
     fulfillment: CreatedFulfillment|null;
     error: ErrorObject|null;
 }
+
+export interface SageImportResponseV2 {
+    order: ExtendedSavedOrder;
+    success: boolean;
+    salesOrderNo: string;
+    lineResponse: string[];
+    import_status: string;
+    validation: string[]
+}
+export interface SageImportError {
+    error: string;
+    salesOrderNo?: string;
+}
