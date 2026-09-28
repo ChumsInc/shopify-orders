@@ -26,7 +26,7 @@ const OrderItems = () => {
                         <td>{row.sku}</td>
                         <td>{row.name}</td>
                         <td className="text-end">{row.quantity}</td>
-                        <td className="text-end">{row.originalTotalSet.shopMoney.amount}</td>
+                        <td className="text-end">{row.originalTotalSet.shopMoney.amount as number|string}</td>
                     </tr>
                 ))}
                 </tbody>

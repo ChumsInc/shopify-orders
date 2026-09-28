@@ -27,9 +27,9 @@ export const orderSorter = (sort: SortProps<ShopifyOrderRow>) =>
             case 'createdAt':
             case 'closedAt':
                 return (
-                    (a.graphqlOrder?.[field] ?? '').localeCompare(b.graphqlOrder?.[field] ?? '') === 0
+                    (a.graphqlOrder?.[field] as string ?? '').localeCompare(b.graphqlOrder?.[field] as string ?? '') === 0
                         ? (a.id > b.id ? 1 : -1)
-                        : (a.graphqlOrder?.[field] ?? '').localeCompare(b.graphqlOrder?.[field] ?? '')
+                        : (a.graphqlOrder?.[field] as string ?? '').localeCompare(b.graphqlOrder?.[field] as string ?? '')
                 ) * sortMod;
             case 'shippingAddress': {
                 const aVal = [a.graphqlOrder?.shippingAddress?.city ?? '', a.graphqlOrder?.shippingAddress?.provinceCode ?? '', a.graphqlOrder?.shippingAddress?.zip ?? ''].join(' ').toLowerCase();
@@ -39,12 +39,13 @@ export const orderSorter = (sort: SortProps<ShopifyOrderRow>) =>
                     : aVal.localeCompare(bVal)) * sortMod;
             }
             case 'currentTotalPriceSet':
-                const aVal = Number(a.graphqlOrder?.currentTotalPriceSet?.shopMoney?.amount ?? 0)
-                const bVal = Number(b.graphqlOrder?.currentTotalPriceSet?.shopMoney?.amount ?? 0)
+            {
+                const aVal = Number(a.graphqlOrder?.currentTotalPriceSet?.shopMoney?.amount as string | number ?? 0)
+                const bVal = Number(b.graphqlOrder?.currentTotalPriceSet?.shopMoney?.amount as string | number ?? 0)
                 return (aVal === bVal
                     ? (a.id > b.id ? 1 : -1)
                     : (aVal > bVal ? 1 : -1)) * sortMod;
-
+            }
             default:
                 return (a.id > b.id ? 1 : -1) * sortMod;
         }
@@ -87,8 +88,8 @@ export const buildOrdersAges = (orders: ShopifyOrderRow[]): OrdersAgeList => {
     const list: OrdersAgeList = {};
     const today = new Date();
     orders.forEach(order => {
-        const daysOld: number = businessDayjs(order.graphqlOrder?.createdAt ?? today)
-            .businessDaysDiff(businessDayjs(order.graphqlOrder?.closedAt ?? today));
+        const daysOld: number = businessDayjs(order.graphqlOrder?.createdAt  as string ?? today)
+            .businessDaysDiff(businessDayjs(order.graphqlOrder?.closedAt as string ?? today));
         if (list[daysOld] === undefined) {
             list[daysOld] = 0;
         }

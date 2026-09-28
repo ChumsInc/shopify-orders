@@ -34,7 +34,7 @@ export const orderListFields: SortableTableField<ShopifyOrderRow>[] = [
     {
         field: 'createdAt',
         title: 'Date',
-        render: (row) => friendlyDate(row.graphqlOrder?.createdAt ?? null),
+        render: (row) => friendlyDate(row.graphqlOrder?.createdAt as string ?? null),
         sortable: true
     },
     {

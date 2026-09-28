@@ -11,7 +11,7 @@ const FulfillButton = ({...rest}: ButtonProps) => {
 
     const clickHandler = () => {
         if (order && order.graphqlOrder) {
-            dispatch(fulfillOrder(order.graphqlOrder.legacyResourceId))
+            dispatch(fulfillOrder(order.graphqlOrder.legacyResourceId  as string))
         }
     }
 
@@ -24,12 +24,12 @@ const FulfillButton = ({...rest}: ButtonProps) => {
         || fulfillment.status === 'ON_HOLD';
     const variant = (fulfillment?.status === 'REQUEST_DECLINED' || fulfillment?.status === 'ON_HOLD')
         ? 'danger'
-        : 'success';
+        : 'outline-success';
     return (
-        <Button type="button" size="sm" variant={variant}
+        <Button type="button" size="sm" variant={variant} title={fulfillment?.status}
                 disabled={disabled}
                 onClick={clickHandler} {...rest}>
-            Fulfill Order: {fulfillment?.status}
+            Fulfill Order
         </Button>
     )
 }

@@ -84,8 +84,8 @@ export default function CurrentOrder() {
                     {!!current.graphqlOrder?.createdAt && (
                         <div>
                             <strong className="me-3">Order Date:</strong>
-                            <span className="me-3">{dayjs(current.graphqlOrder.createdAt).format('MM/DD/YYYY')}</span>
-                            <small>{dayjs(current.graphqlOrder.createdAt).format('hh:mm a')}</small>
+                            <span className="me-3">{dayjs(current.graphqlOrder.createdAt as string).format('MM/DD/YYYY')}</span>
+                            <small>{dayjs(current.graphqlOrder.createdAt as string).format('hh:mm a')}</small>
                         </div>
                     )}
                     <div>

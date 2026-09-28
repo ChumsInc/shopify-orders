@@ -8,7 +8,6 @@ import type {
     TriggerImportOptions
 } from "../ducks/types";
 import type {OrderRiskSummary} from "chums-types/shopify-graphql";
-import {allowErrorResponseHandler} from "@chumsinc/ui-utils/src/fetch.ts";
 import {isSageImportResponse} from "@/utils/utils.ts";
 
 export async function fetchOrder(arg: number | string): Promise<ExtendedSavedOrder | null> {
@@ -43,7 +42,7 @@ export async function fetchOrders(): Promise<ExtendedSavedOrder[]> {
 
 export async function retryImportOrder(arg: TriggerImportOptions): Promise<ExtendedSavedOrder | null> {
     try {
-        const url = `/api/shopify/graphql/orders/${encodeURIComponent(arg.id)}/import.json?retry=true`;
+        const url = `/api/shopify/graphql/query/orders/${encodeURIComponent(arg.id)}/import.json?retry=true`;
         const res = await fetchJSON<SageImportResponseV2 | SageImportError>(url, {cache: 'no-cache', method: 'POST'})
         if (res && isSageImportResponse(res)) {
             return res.order;
@@ -79,7 +78,7 @@ export async function postLinkSalesOrder(arg: LinkSalesOrderOptions): Promise<Ex
 export async function postFulfillOrder(arg: number | string): Promise<CreatedFulfillmentResponse | null> {
     try {
         const url = `/api/shopify/graphql/mutate/orders/${encodeURIComponent(arg)}/fulfill.json`;
-        const res = await fetchJSON<CreatedFulfillmentResponse>(url, {method: 'POST'}, allowErrorResponseHandler);
+        const res = await fetchJSON<CreatedFulfillmentResponse>(url, {method: 'POST'});
         return res ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {

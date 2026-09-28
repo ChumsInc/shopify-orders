@@ -21,7 +21,7 @@ const ShopifyOrderStatusBadges = ({order}: { order: Order | null }) => {
                     {order.risk.recommendation}
                 </Badge>
             )}
-            <DaysBadge createdAt={order.createdAt ?? now()}/>
+            <DaysBadge createdAt={order.createdAt as string ?? now()}/>
             {order.paymentGatewayNames?.map((gateway) => (
                 <PaymentGatewayBadge gateway={gateway} key={gateway}/>
             ))}
@@ -31,7 +31,7 @@ const ShopifyOrderStatusBadges = ({order}: { order: Order | null }) => {
             {hasDiscount && (<Badge bg="success"><span className="bi-currency-dollar me-1" />Disc</Badge>)}
             <FulfillmentBadge status={order.displayFulfillmentStatus}/>
             {!!order.cancelledAt && (
-                <Badge bg="warning">Cancelled: {dayjs(order.cancelledAt).format('MM/DD/YYYY')}</Badge>
+                <Badge bg="warning">Cancelled: {dayjs(order.cancelledAt as string).format('MM/DD/YYYY')}</Badge>
             )}
         </div>
     );
