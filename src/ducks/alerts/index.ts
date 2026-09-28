@@ -35,8 +35,7 @@ const alertsSlice = createSlice({
             if (action.payload.context) {
                 const alert = selectors.selectAll(state).find(alert => alert.context === action.payload.context);
                 if (alert) {
-                    alert.count += 1;
-                    adapter.setOne(state, alert);
+                    adapter.setOne(state, {...alert, count: alert.count + 1});
                     return;
                 }
             }
@@ -51,8 +50,7 @@ const alertsSlice = createSlice({
                     const context = action.type.replace('/rejected', '');
                     const alert = selectors.selectAll(state).find(alert => alert.context === context);
                     if (alert) {
-                        alert.count += 1;
-                        adapter.setOne(state, alert);
+                        adapter.setOne(state, {...alert, count: alert.count + 1});
                         return;
                     }
                     adapter.addOne(state, {
